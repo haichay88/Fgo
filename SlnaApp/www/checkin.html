@@ -1,0 +1,38 @@
+﻿<div data-page="category" class="page">
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="left"><a href="#" class="back link"> <i class="icon icon-back"></i><span></span></a></div>
+            <div class="center "> Check in</div>
+            <div class="right">
+                <!-- Right link contains only icon - additional "icon-only" class--><a href="#" class="link icon-only open-panel"> <i class="icon icon-bars"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scrollable page content-->
+    <div class="page-content" ng-controller="UserController">
+        <div class="list-block">
+            <ul>
+                <li>
+                    <div class="item-content">
+                        <div class="item-media"><i class="icon icon-form-name"></i></div>
+                        <div class="item-inner">
+                            <div class="item-title label">Hotel Name</div>
+                            <div class="item-input">
+                                <input type="text" placeholder="Hotel name" />
+                            </div>
+                        </div>
+                    </div>
+                </li>                
+            </ul>
+        </div>
+        <div class="content-block">
+            <div class="row">               
+                <div class="col-100">
+                    <input type="submit" ng-click="getLocation()" value="Check in" class="button button-big button-fill color-green" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

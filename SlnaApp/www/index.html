@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+<html  ng-app="MyApp">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#2196f3">
+    <title>Songlamplus.vn</title>
+    <!-- Path to Framework7 Library CSS-->
+    <!--<link rel="stylesheet" href="css/framework7.ios.min.css">-->
+    <link href="css/framework7.material.min.css" rel="stylesheet" />
+    <link href="css/framework7.material.colors.min.css" rel="stylesheet" />
+    <link href="css/kitchen-sink.css" rel="stylesheet" />
+    <link href="css/toastr.css" rel="stylesheet" />
+    <!-- Path to your custom app styles-->
+    <link rel="stylesheet" href="css/my-app.css">
+</head>
+<body>
+    <!-- Status bar overlay for fullscreen mode-->
+    <div class="statusbar-overlay"></div>
+    <!-- Panels overlay-->
+    <div class="panel-overlay"></div>
+    <!-- Left panel with reveal effect-->
+    <div class="panel panel-left panel-cover">
+        <div class="view navbar-fixed">
+            <div class="pages">
+                <div data-page="panel-left" class="page">
+                    <div class="navbar">
+                        <div class="navbar-inner">
+                            <div class="center">Chuyên mục</div>
+                        </div>
+                    </div>
+                    <div class="page-content">
+                        <div class="list-block">
+                            <ul>
+                                <li>
+                                    <a href="checkin.html" class="item-link close-panel">
+                                        <div class="item-content">
+                                            <div class="item-media"><i class="icon icon-f7"></i></div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Check in</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="category.html" class="item-link close-panel">
+                                        <div class="item-content">
+                                            <div class="item-media"><i class="icon icon-f7"></i></div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Thời sự - xã hội</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="list-view.html" class="item-link close-panel">
+                                        <div class="item-content">
+                                            <div class="item-media"><i class="icon icon-f7"></i></div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Sông lam nghệ an</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="media-lists.html" class="item-link close-panel">
+                                        <div class="item-content">
+                                            <div class="item-media"><i class="icon icon-f7"></i></div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Thể thao việt nam</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="modals.html" class="item-link close-panel">
+                                        <div class="item-content">
+                                            <div class="item-media"><i class="icon icon-f7"></i></div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Thể thao quốc tế</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="bars.html" class="item-link close-panel">
+                                        <div class="item-content">
+                                            <div class="item-media"><i class="icon icon-f7"></i></div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Văn hóa - Giải trí</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="popover.html" class="item-link close-panel">
+                                        <div class="item-content">
+                                            <div class="item-media"><i class="icon icon-f7"></i></div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Video</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                              
+                            </ul>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <!-- Right panel with cover effect-->
+    <div class="panel panel-right panel-cover">
+        <div class="content-block">
+            <p>Right panel content goes here</p>
+        </div>
+    </div>
+    
+    <!-- Views-->
+    <div class="views" >
+        <!-- Your main view, should have "view-main" class-->
+        <div class="view view-main">
+            <div class="pages navbar-fixed">
+                <div data-page="index" class="page">
+                    <!-- Top Navbar-->
+                    <div class="navbar">
+                        <!-- Navbar inner for Index page-->
+                        <div class="navbar-inner">
+                            <!-- We have home navbar without left link-->
+                            <div class="center">Bizkasa system</div>
+                            <div class="right">
+                                <!-- Right link contains only icon - additional "icon-only" class--><a href="#" class="link icon-only open-panel"> <i class="icon icon-bars"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Floating Action Button -->
+                    <a href="newDetail.html" class="floating-button color-pink">
+                        <i class="icon icon-plus"></i>
+                    </a>
+                    <!-- Scrollable page content-->
+                    <div class="page-content" ng-controller="IndexPageController">
+                        <div class="list-block media-list">
+                            <ul>
+                                <li>
+                                    <a href="#" class="item-link item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title-row">
+                                                <div class="item-title">Facebook</div>
+                                                <div class="item-after">17:14</div>
+                                            </div>
+                                            <div class="item-subtitle">New messages from John Doe</div>
+                                            <div class="item-text">Lorem ipsum dolor sit amet...</div>
+                                        </div>
+                                    </a>
+                                </li>                              
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+           
+          
+
+        </div>
+    </div>
+
+    <div data-page="login-screen" class="login-screen modal-in" ng-controller="IndexPageController">
+        <div class="page-content login-screen-content">
+            <div class="login-screen-title">My App</div>
+            <form>
+                <div class="list-block">
+                    <ul>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">Username</div>
+                                <div class="item-input">
+                                    <input type="text" name="username" placeholder="Your username" ng-model="User.Email" />
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">Password</div>
+                                <div class="item-input">
+                                    <input type="password" name="password" placeholder="Your password" ng-model="User.Password" />
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-block">
+                    <div class="row">
+                        <div class="col-100">
+                            <input type="submit" ng-click="Singin()" value="Sign in" class="button button-raised button-fill color-cyan" />
+                        </div>
+                    </div>
+                </div>
+                <div class="content-block">
+                    <div class="row">
+                        <div class="col-100">
+                            <input type="submit" value="Login with Facebook" class="button button-raised button-fill color-indigo" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="cordova.js"></script>
+    <script src="scripts/platformOverrides.js"></script>
+    <!-- Path to Framework7 Library JS-->
+    <script type="text/javascript" src="js/framework7.min.js"></script>
+    <script src="js/jquery-1.10.2.js"></script>
+    <!-- Path to your app js-->
+
+    <script src="js/toastr.js"></script>
+    <script src="js/angular.js"></script>
+    <script src="js/md5.js"></script>
+    <!--<script type="text/javascript" src="js/my-app.js"></script>-->
+    <script src="js/config.js"></script>
+    <script src="js/services/initService.js"></script>
+    <script type="text/javascript" src="js/controller/IndexPageController.js"></script>
+    
+   
+</body>
+</html>
