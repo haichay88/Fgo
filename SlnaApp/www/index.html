@@ -9,9 +9,9 @@
     <title>Songlamplus.vn</title>
     <!-- Path to Framework7 Library CSS-->
     <!--<link rel="stylesheet" href="css/framework7.ios.min.css">-->
-    <link href="css/framework7.material.min.css" rel="stylesheet" />
-    <link href="css/framework7.material.colors.min.css" rel="stylesheet" />
-    <link href="css/kitchen-sink.css" rel="stylesheet" />
+    <link href="css/framework7.material.css" rel="stylesheet" />
+    <link href="css/framework7.material.colors.css" rel="stylesheet" />
+    <link href="css/material-icons.css" rel="stylesheet" />
     <link href="css/toastr.css" rel="stylesheet" />
     <!-- Path to your custom app styles-->
     <link rel="stylesheet" href="css/my-app.css">
@@ -125,7 +125,7 @@
     <div class="views" >
         <!-- Your main view, should have "view-main" class-->
         <div class="view view-main">
-            <div class="pages navbar-fixed">
+            <div class="pages navbar-through toolbar-through">
                 <div data-page="index" class="page">
                     <!-- Top Navbar-->
                     <div class="navbar">
@@ -139,21 +139,21 @@
                         </div>
                     </div>
                     <!-- Floating Action Button -->
-                    <a href="newDetail.html" class="floating-button color-pink">
+                    <a href="addOrder.html" class="floating-button color-pink">
                         <i class="icon icon-plus"></i>
                     </a>
                     <!-- Scrollable page content-->
                     <div class="page-content" ng-controller="IndexPageController">
-                        <div class="list-block media-list">
+                        <div class="list-block media-list" ng-init="GetOrders()">
                             <ul>
-                                <li>
+                                <li ng-repeat="item in Orders">
                                     <a href="#" class="item-link item-content">
                                         <div class="item-inner">
                                             <div class="item-title-row">
-                                                <div class="item-title">Facebook</div>
+                                                <div class="item-title">{{item.Title}}</div>
                                                 <div class="item-after">17:14</div>
                                             </div>
-                                            <div class="item-subtitle">New messages from John Doe</div>
+                                            <div class="item-subtitle">{{item.RestaurantName}}</div>
                                             <div class="item-text">Lorem ipsum dolor sit amet...</div>
                                         </div>
                                     </a>
@@ -215,14 +215,14 @@
     <script src="cordova.js"></script>
     <script src="scripts/platformOverrides.js"></script>
     <!-- Path to Framework7 Library JS-->
-    <script type="text/javascript" src="js/framework7.min.js"></script>
     <script src="js/jquery-1.10.2.js"></script>
     <!-- Path to your app js-->
 
+    <script src="js/framework7.js"></script>
+    <script src="js/global.js"></script>
     <script src="js/toastr.js"></script>
     <script src="js/angular.js"></script>
     <script src="js/md5.js"></script>
-    <!--<script type="text/javascript" src="js/my-app.js"></script>-->
     <script src="js/config.js"></script>
     <script src="js/services/initService.js"></script>
     <script type="text/javascript" src="js/controller/IndexPageController.js"></script>

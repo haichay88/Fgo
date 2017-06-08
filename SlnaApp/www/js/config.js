@@ -13,7 +13,8 @@ MyApp.angular = angular.module('MyApp', []);
 //});
 MyApp.fw7 = {
   app : new Framework7({
-      animateNavBackIcon: true
+     
+      material: true
   }),
   options : {
     dynamicNavbar: true,
@@ -21,5 +22,7 @@ MyApp.fw7 = {
   },
   views : []
 };
+
+
 
 

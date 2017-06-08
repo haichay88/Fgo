@@ -23,7 +23,7 @@ MyApp.angular.service('FgoService', function ($http) {
 });
 MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService', 'FgoService', function ($scope, $http, InitService, FgoService) {
     'use strict';
-    var RootURL = "http://friendgonow.com/API/";
+   
     var destinationType = null;
     var pictureSource = null;
     InitService.addEventListener('ready', function () {
@@ -157,25 +157,42 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     };
     $scope.Singin = function () {
         if (!$scope.User.Email) {
-            toastr.error("You must upload an image !");
+            toastr.error("Username invalid!");
             return;
         }
         if (!$scope.User.Password) {
-            toastr.error("You must enter hotel name !");
+            toastr.error("Password invalid !");
             return;
         }
         $scope.User.Password = CryptoJS.MD5($scope.User.Password).toString();
-        var urlPost = RootURL + "api/Account/Login";
+        var urlPost = CommonUtils.RootUrl("api/Account/Login");
         FgoService.AjaxPost(urlPost, $scope.User, function (reponse) {
             var result = reponse.data.Data;
             if (!result.IsError) {
-                debugger
-                localStorage.setItem("token", result.Data.Token);
+                CommonUtils.SetToken(result.Data.Token);
             } else {
                 toastr.error(result.Message);
             }
-            console.log(reponse);
 
         });
+    };
+
+    $scope.GetOrders = function () {
+        CommonUtils.showWait(true);
+        var token = CommonUtils.GetToken();
+        if (!token)
+        { return; }
+        var request = { Token: token }
+        var urlPost = CommonUtils.RootUrl("api/Order/GetOrders");
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
+            var result = reponse.data.Data;
+            if (!result.IsError) {
+                $scope.Orders = result.Data;
+            } else {
+                toastr.error(result.Message);
+            }
+           
+        });
+        CommonUtils.showWait(false);
     };
 }]);

@@ -1,0 +1,64 @@
+﻿<!-- We don't need full layout here, because this page will be parsed with Ajax-->
+<!-- Top Navbar-->
+<!-- Page, data-page contains page name-->
+
+<div data-page="addOrder" class="page">
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="left"><a href="index.html" class="back link icon-only"><i class="icon icon-back"></i></a></div>
+            <div class="center">New order</div>
+            <!--<div class="right"><a href="#" class="link open-panel icon-only"><i class="icon icon-bars"></i></a></div>-->
+        </div>
+    </div>
+
+    <!-- Scrollable page content-->
+    <div class="page-content">
+        <div class="list-block inputs-list">
+            <ul>
+                <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title label">Title</div>
+                            <div class="item-input">
+                                <input type="text" placeholder="Your title" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="item-content">
+                    <div class="item-inner">
+                        <div class="item-title floating-label">Place</div>
+                        <div class="item-input">
+                            <input type="text" id="autocomplete-dropdown-ajax" />
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-input">
+                                <input type="text" placeholder="Date Time" readonly="readonly" id="ks-calendar-default" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <a href="#" id="autocomplete-standalone-ajax" class="item-link item-content autocomplete-opener">
+                        <input type="hidden" />
+                        <div class="item-inner">
+                            <div class="item-title">Friends</div>
+                            <div class="item-after"></div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="content-block">
+            <div class="row">
+                <div class="col-100">
+                    <input type="submit" value="Save" class="button button-raised button-fill color-green" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

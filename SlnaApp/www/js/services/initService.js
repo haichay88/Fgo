@@ -22,19 +22,26 @@ MyApp.angular.factory('InitService', ['$document', function ($document) {
     for (i = 0; i < eventListeners.ready.length; i = i + 1) {
       eventListeners.ready[i]();
     }
-    var token = localStorage.getItem("token");
+
+
+    var token = CommonUtils.GetToken();
     if (token !== null) {
         // If already logged in
         fw7.app.closeModal(".login-screen");
     }
-    
+    var today = new Date();
+    fw7.app.onPageInit('addOrder', function (page) {
+        // Default
+        var calendarDefault = fw7.app.calendar({
+            input: '#ks-calendar-default',
+        });
+    });
     
   }
   
   // Init
   (function () {
       $document.ready(function () {
-          //MyApp.fw7.app.loginScreen();
       if (document.URL.indexOf("http://") === -1 && document.URL.indexOf("https://") === -1) {
         // Cordova
         console.log("Using Cordova/PhoneGap setting");
