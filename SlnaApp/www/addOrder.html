@@ -12,13 +12,13 @@
     </div>
 
     <!-- Scrollable page content-->
-    <div class="page-content">
-        <div class="list-block inputs-list">
+    <div class="page-content" ng-controller="IndexPageController">
+        <div class="list-block inputs-list"  ng-init="getContacts()">
             <ul>
                 <li>
                     <div class="item-content">
                         <div class="item-inner">
-                            <div class="item-title label">Title</div>
+                            <div class="item-title floating-label">Title</div>
                             <div class="item-input">
                                 <input type="text" placeholder="Your title" />
                             </div>
@@ -33,17 +33,19 @@
                         </div>
                     </div>
                 </li>
+               
                 <li>
                     <div class="item-content">
                         <div class="item-inner">
+                            <div class="item-title floating-label">Date Time</div>
                             <div class="item-input">
-                                <input type="text" placeholder="Date Time" readonly="readonly" id="ks-calendar-default" />
+                                <input type="text" placeholder="Date Time" readonly="readonly" id="set-time" />
                             </div>
                         </div>
                     </div>
                 </li>
                 <li>
-                    <a href="#" id="autocomplete-standalone-ajax" class="item-link item-content autocomplete-opener">
+                    <a href="#" id="autocomplete-standalone-multiple" class="item-link item-content autocomplete-opener">
                         <input type="hidden" />
                         <div class="item-inner">
                             <div class="item-title">Friends</div>

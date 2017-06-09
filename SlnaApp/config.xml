@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<widget xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:vs="http://schemas.microsoft.com/appx/2014/htmlapps" id="myfinance.tikasa.checkin" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" defaultlocale="en-US">
+<widget xmlns:cdv="http://cordova.apache.org/ns/1.0"
+        xmlns:vs="http://schemas.microsoft.com/appx/2014/htmlapps"
+         xmlns:android="http://schemas.android.com/apk/res/android" id="myfinance.tikasa.checkin" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" defaultlocale="en-US">
   <name>BizkasaSystem</name>
   <description>A blank project that uses Apache Cordova to help you build an app that targets multiple mobile platforms: Android, iOS, Windows, and Windows Phone.</description>
   <author href="http://cordova.io" email="dev@cordova.apache.org">Apache Cordova Team </author>
   <content src="index.html" />
   <access origin="*" />
   <vs:features />
- 
-  <preference name="SplashScreen" value="screen"/>
-  <preference name="SplashScreenDelay"    value="5000" />
+  <preference name="SplashScreen" value="screen" />
+  <preference name="SplashScreenDelay" value="5000" />
   <feature name="SplashScreen">
     <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
     <param name="onload" value="true" />
@@ -24,6 +25,11 @@
   <allow-intent href="geo:*" />
   <platform name="android">
     <allow-intent href="market:*" />
+     <config-file target="AndroidManifest.xml" parent="/*">
+         <uses-permission android:name="android.permission.INTERNET" />
+         <!--<uses-permission android:name="android.permission.NETWORK_ACCESS" />
+             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    </config-file>
   </platform>
   <platform name="ios">
     <allow-intent href="itms:*" />
@@ -122,4 +128,5 @@
   <engine name="ios" spec="4.2.0" />
   <engine name="windows" spec="4.4.2" />
   <plugin name="cordova-plugin-splashscreen" spec="~4.0.3" />
+  <plugin name="cordova-plugin-contacts" spec="~2.3.1" />
 </widget>

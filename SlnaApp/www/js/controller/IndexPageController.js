@@ -36,6 +36,10 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
         // And you can access Framework7 like this:
         // MyApp.fw7.app
+        
+
+
+
 
         $scope.Hotel = {
             Name: undefined,
@@ -47,7 +51,26 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         };
 
     });
+   
+    $scope.getContacts = function () {
+        var options = new ContactFindOptions();
+        options.filter = "";
+        options.multiple = true;
+        var filter = ["displayName", "emails"];
+        navigator.contacts.find(filter, function (onSuccess) {
+            var hasEmail = $.grep(onSuccess, function (n, i) {
+                return n.emails;
+            });
+            $.each(hasEmail, function (i, n) {
+                InitService.Contacts = [];
+                InitService.Contacts.push({ displayName: n.displayName, email: n.emails[0] });
+            });
+            console.log(hasEmail)
+            // InitService.contacts.push(onSuccess)
+        }, function (err) { debugger }, options);
 
+    };
+   
     $scope.getLocation = function () {
         navigator.geolocation.getCurrentPosition(function (position) {
             console.log('getCurrentPosition: ' + position.coords.longitude);
@@ -191,7 +214,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             } else {
                 toastr.error(result.Message);
             }
-           
+            app.closeModal(".login-screen");
         });
         CommonUtils.showWait(false);
     };

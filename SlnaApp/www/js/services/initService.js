@@ -7,8 +7,8 @@ MyApp.angular.factory('InitService', ['$document', function ($document) {
   var pub = {},
     eventListeners = {
       'ready' : []
-    };
-  
+      };
+  var Contacts = [];
   pub.addEventListener = function (eventName, listener) {     
     eventListeners[eventName].push(listener);
   };
@@ -23,22 +23,132 @@ MyApp.angular.factory('InitService', ['$document', function ($document) {
       eventListeners.ready[i]();
     }
 
+    
+   
+    GetContacts();
+
 
     var token = CommonUtils.GetToken();
     if (token !== null) {
         // If already logged in
         fw7.app.closeModal(".login-screen");
-    }
+    } else
+        CommonUtils.showWait(false);
     var today = new Date();
     fw7.app.onPageInit('addOrder', function (page) {
         // Default
         var calendarDefault = fw7.app.calendar({
             input: '#ks-calendar-default',
         });
+        // Inline date-time
+        var pickerInline = fw7.app.picker({
+            input: '#set-time',
+            toolbar: true,
+            rotateEffect: true,
+            value: [today.getMonth()+1, today.getDate(), today.getFullYear(), today.getHours(), (today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes())],
+            onChange: function (picker, values, displayValues) {
+                var daysInMonth = new Date(picker.value[2], picker.value[0] * 1 + 1, 0).getDate();
+                if (values[1] > daysInMonth) {
+                    picker.cols[1].setValue(daysInMonth);
+                }
+            },
+            formatValue: function (p, values, displayValues) {
+                return values[1] + '/' + values[0] + '/' + values[2] + ' ' + values[3] + ':' + values[4];
+            },
+            cols: [
+                // Months
+                {
+                    values: ('1 2 3 4 5 6 7 8 9 10 11 12').split(' '),
+                    displayValues: ('January February March April May June July August September October November December').split(' '),
+                    textAlign: 'left'
+                },
+                // Days
+                {
+                    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+                },
+                // Years
+                {
+                    values: (function () {
+                        var arr = [];
+                        for (var i = 1950; i <= 2030; i++) { arr.push(i); }
+                        return arr;
+                    })(),
+                },
+                // Space divider
+                {
+                    divider: true,
+                    content: '&nbsp;&nbsp;'
+                },
+                // Hours
+                {
+                    values: (function () {
+                        var arr = [];
+                        for (var i = 0; i <= 23; i++) { arr.push(i); }
+                        return arr;
+                    })(),
+                },
+                // Divider
+                {
+                    divider: true,
+                    content: ':'
+                },
+                // Minutes
+                {
+                    values: (function () {
+                        var arr = [];
+                        for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? '0' + i : i); }
+                        return arr;
+                    })(),
+                }
+            ]
+        });
+
+        // Multiple Standalone
+        var autocompleteStandaloneMultiple = fw7.app.autocomplete({
+            openIn: 'page', //open in page
+            opener: $('#autocomplete-standalone-multiple'), //link that opens autocomplete
+            multiple: true, //allow multiple values
+            source: function (autocomplete, query, render) {
+                var results = [];
+                if (query.length === 0) {
+                    render(results);
+                    return;
+                }
+                // Find matched items
+                for (var i = 0; i < Contacts.length; i++) {
+                    if (Contacts[i].displayName.toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(Contacts[i].displayName);
+                }
+                // Render items by passing array with result items
+                render(results);
+            },
+            onChange: function (autocomplete, value) {
+                // Add item text value to item-after
+                $('#autocomplete-standalone-multiple').find('.item-after').text(value.join(', '));
+                // Add item value to input value
+                $('#autocomplete-standalone-multiple').find('input').val(value.join(', '));
+            }
+        });
     });
     
   }
-  
+  function GetContacts() {
+      var options = new ContactFindOptions();
+      options.filter = "";
+      options.multiple = true;
+      var filter = ["displayName", "emails"];
+      navigator.contacts.find(filter, function (onSuccess) {
+          console.log(onSuccess)
+          var hasEmail = $.grep(onSuccess, function (n, i) {
+              return n.emails && n.displayName;
+          });
+          $.each(hasEmail, function (i, n) {
+              Contacts.push({ displayName: n.displayName, email: n.emails[0] });
+          });
+          console.log(hasEmail)
+          // InitService.contacts.push(onSuccess)
+      }, function (err) { debugger }, options);
+
+  };
   // Init
   (function () {
       $document.ready(function () {
@@ -52,7 +162,8 @@ MyApp.angular.factory('InitService', ['$document', function ($document) {
         onReady();
       }
       
-    });
+      });
+
   }());
 
   return pub;
