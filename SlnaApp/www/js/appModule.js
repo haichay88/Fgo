@@ -1,79 +1,40 @@
-﻿var app;
-(function () {
-    app = angular.module("appModule", []);
+﻿Framework7.prototype.plugins.angular = function (app, params) {
+    function compile(newPage) {
+        try {
+            var $page = $(newPage);
+            var injector = angular.element("[ng-app]").injector();
+            var $compile = injector.get("$compile");
+            var $timeout = injector.get("$timeout");
+            var $scope = injector.get("$rootScope");
+            $scope = $scope.$$childHead;
+            $timeout(function () {
+                $compile($page)($scope);
+            })
+        } catch (e) {
+            //console.error("Some Error Occured While Compiling The Template", e);
+        }
+    }
 
-    app.config(function ($stateProvider, $urlRouterProvider, $compileProvider) {
-        $urlRouterProvider.otherwise('/login');
-    });
-    app.directive('ngReallyClick', ['$modal',
-    function ($modal) {
-        var ModalInstanceCtrl = function ($scope, $modalInstance) {
-            $scope.ok = function () {
-                $modalInstance.close();
-            };
-
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        };
-
-        return {
-            restrict: 'A',
-            scope: {
-                ngReallyClick: "&",
-                item: "="
-            },
-            link: function (scope, element, attrs) {
-                element.bind('click', function () {
-                    var message = attrs.ngReallyMessage || "Are you sure ?";
-
-                    /*
-                    //This works
-                    if (message && confirm(message)) {
-                      scope.$apply(attrs.ngReallyClick);
-                    }
-                    //*/
-
-                    //*This doesn't works
-                    var modalHtml = '<div class="modal-body">' + message + '</div>';
-                    modalHtml += '<div class="modal-footer"><button class="btn btn-primary" ng-click="ok()">OK</button><button class="btn btn-warning" ng-click="cancel()">Cancel</button></div>';
-
-                    var modalInstance = $modal.open({
-                        template: modalHtml,
-                        controller: ModalInstanceCtrl
-                    });
-
-                    modalInstance.result.then(function () {
-                        scope.ngReallyClick({ item: scope.item }); //raise an error : $digest already in progress
-                    }, function () {
-                        //Modal dismissed
-                    });
-                    //*/
-
-                });
-
+    function removeOldPage(pageData) {
+        var $oldPage = $(".views .view .pages .page").not($(pageData.container));
+        if ($oldPage.length > 0) {
+            var controllerName = $oldPage.attr("ng-controller");
+            var $scope = angular.element('[ng-controller=' + controllerName + ']').scope();
+            if ($scope) {
+                $scope.$destroy();
+                $oldPage.remove();
             }
         }
     }
-    ]);
-    app.directive('format', ['$filter', function ($filter) {
-        return {
-            require: '?ngModel',
-            link: function (scope, elem, attrs, ctrl) {
-                if (!ctrl) return;
 
-
-                ctrl.$formatters.unshift(function (a) {
-                    return $filter(attrs.format)(ctrl.$modelValue)
-                });
-
-
-                ctrl.$parsers.unshift(function (viewValue) {
-                    var plainNumber = viewValue.replace(/[^\d|\-+|\.+]/g, '');
-                    elem.val($filter(attrs.format)(plainNumber));
-                    return plainNumber;
-                });
+    return {
+        hooks: {
+            pageInit: function (pageData) {
+                compile(pageData.container);
+            },
+            pageAfterAnimation: function (pageData) {
+                removeOldPage(pageData);
             }
-        };
-    }]);
-})();
+        }
+    }
+};

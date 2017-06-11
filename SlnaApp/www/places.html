@@ -1,0 +1,41 @@
+﻿<div data-page="category" class="page">
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="left"><a href="#" class="back link"> <i class="icon icon-back"></i><span></span></a></div>
+            <div class="center "> list of place</div>
+            <div class="right">
+                <!-- Right link contains only icon - additional "icon-only" class--><a href="#" class="link icon-only open-panel"> <i class="icon icon-bars"></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- Floating Action Button -->
+    <a href="addPlace.html" class="floating-button color-pink">
+        <i class="icon icon-plus"></i>
+    </a>
+    <!-- Scrollable page content-->
+    <div class="page-content pull-to-refresh-content" ng-controller="IndexPageController">
+        <div class="pull-to-refresh-layer">
+            <div class="preloader"></div>
+            <div class="pull-to-refresh-arrow"></div>
+        </div>
+        <div class="list-block media-list" ng-init="GetPlaces()">
+            <ul>
+                <li ng-repeat="item in Places" class="swipeout">
+                    <div class="item-content swipeout-content">
+                        <div class="item-inner">
+                            <div class="item-title-row">
+                                <div class="item-title">{{item.Name}}</div>
+                                <div class="item-after">17:14</div>
+                            </div>
+                            <div class="item-subtitle">{{item.MenuUrl}}</div>
+                            <div class="item-text">{{item.Address}}</div>
+                        </div>
+                        <div class="swipeout-actions-right"><a href="#" class="swipeout-delete">Delete</a></div>
+                    </div>
+                </li>            
+            </ul>
+        </div>
+        
+
+    </div>
+</div>

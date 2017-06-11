@@ -23,7 +23,7 @@ MyApp.angular.service('FgoService', function ($http) {
 });
 MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService', 'FgoService', function ($scope, $http, InitService, FgoService) {
     'use strict';
-   
+    var app = MyApp.fw7.app;
     var destinationType = null;
     var pictureSource = null;
     InitService.addEventListener('ready', function () {
@@ -51,7 +51,162 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         };
 
     });
-   
+    var today = new Date();
+    $scope.Contacts = [];
+    app.onPageInit('addOrder', function (page) {
+        // Default
+        var calendarDefault = app.calendar({
+            input: '#ks-calendar-default',
+        });
+        // get contacts
+        $scope.getContacts();
+        // Inline date-time
+        var pickerInline = app.picker({
+            input: '#set-time',
+            toolbar: true,
+            rotateEffect: true,
+            value: [today.getMonth() + 1, today.getDate(), today.getFullYear(), today.getHours(), (today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes())],
+            onChange: function (picker, values, displayValues) {
+                var daysInMonth = new Date(picker.value[2], picker.value[0] * 1 + 1, 0).getDate();
+                if (values[1] > daysInMonth) {
+                    picker.cols[1].setValue(daysInMonth);
+                }
+            },
+            formatValue: function (p, values, displayValues) {
+                return values[1] + '/' + values[0] + '/' + values[2] + ' ' + values[3] + ':' + values[4];
+            },
+            cols: [
+                // Months
+                {
+                    values: ('1 2 3 4 5 6 7 8 9 10 11 12').split(' '),
+                    displayValues: ('January February March April May June July August September October November December').split(' '),
+                    textAlign: 'left'
+                },
+                // Days
+                {
+                    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+                },
+                // Years
+                {
+                    values: (function () {
+                        var arr = [];
+                        for (var i = 1950; i <= 2030; i++) { arr.push(i); }
+                        return arr;
+                    })(),
+                },
+                // Space divider
+                {
+                    divider: true,
+                    content: '&nbsp;&nbsp;'
+                },
+                // Hours
+                {
+                    values: (function () {
+                        var arr = [];
+                        for (var i = 0; i <= 23; i++) { arr.push(i); }
+                        return arr;
+                    })(),
+                },
+                // Divider
+                {
+                    divider: true,
+                    content: ':'
+                },
+                // Minutes
+                {
+                    values: (function () {
+                        var arr = [];
+                        for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? '0' + i : i); }
+                        return arr;
+                    })(),
+                }
+            ]
+        });
+
+        // Multiple Standalone
+        var autocompleteStandaloneMultiple = app.autocomplete({
+            openIn: 'page', //open in page
+            opener: $('#autocomplete-standalone-multiple'), //link that opens autocomplete
+            multiple: true, //allow multiple values
+            source: function (autocomplete, query, render) {
+                var results = [];
+                if (query.length === 0) {
+                    render(results);
+                    return;
+                }
+                // Find matched items
+                for (var i = 0; i < $scope.Contacts.length; i++) {
+                    if ($scope.Contacts[i].displayName.toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push($scope.Contacts[i].displayName);
+                }
+                // Render items by passing array with result items
+                render(results);
+            },
+            onChange: function (autocomplete, value) {
+                // Add item text value to item-after
+                $('#autocomplete-standalone-multiple').find('.item-after').text(value.join(', '));
+                // Add item value to input value
+                $('#autocomplete-standalone-multiple').find('input').val(value.join(', '));
+            }
+        });
+
+        // Dropdown with ajax data
+        var autocompleteDropdownAjax = app.autocomplete({
+            input: '#autocomplete-dropdown-ajax',
+            openIn: 'dropdown',
+            preloader: true, //enable preloader
+            valueProperty: 'id', //object's "value" property name
+            textProperty: 'name', //object's "text" property name
+            limit: 20, //limit to 20 results
+            dropdownPlaceholderText: 'Try "JavaScript"',
+            source: function (autocomplete, query, render) {
+                var results = [];
+                if (query.length === 0) {
+                    render(results);
+                    return;
+                }
+                // Show Preloader
+                autocomplete.showPreloader();
+                // data send
+                var data = {
+                    Token: CommonUtils.GetToken(),
+                    Keyword: query
+                };
+                // Do Ajax request to Autocomplete data
+                $.ajax({
+                    url: CommonUtils.RootUrl('api/Order/GetPlaces'),
+                    method: 'POST',
+                    dataType: 'json',
+                    //send "query" to server. Useful in case you generate response dynamically
+                    data: data,
+                    success: function (data) {
+                        var result = data.Data.Data;
+                        // Find matched items
+                        for (var i = 0; i < result.length; i++) {
+                            if (result[i].Name.toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(result[i].Name);
+                        }
+                        // Hide Preoloader
+                        autocomplete.hidePreloader();
+                        // Render items by passing array with result items
+                        render(results);
+                    }
+                });
+            }
+        });
+
+        // Pull to refresh content
+        var ptrContent = $(page.container).find('.pull-to-refresh-content');
+        // Add 'refresh' listener on it
+        ptrContent.on('refresh', function (e) {
+            debugger
+            // Emulate 2s loading
+            setTimeout(function () {
+
+                // When loading done, we need to "close" it
+                app.pullToRefreshDone();
+            }, 2000);
+        });
+
+    });
     $scope.getContacts = function () {
         var options = new ContactFindOptions();
         options.filter = "";
@@ -59,11 +214,11 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         var filter = ["displayName", "emails"];
         navigator.contacts.find(filter, function (onSuccess) {
             var hasEmail = $.grep(onSuccess, function (n, i) {
-                return n.emails;
+                return n.emails && n.displayName;
             });
             $.each(hasEmail, function (i, n) {
-                InitService.Contacts = [];
-                InitService.Contacts.push({ displayName: n.displayName, email: n.emails[0] });
+                
+                $scope.Contacts.push({ displayName: n.displayName, email: n.emails[0] });
             });
             console.log(hasEmail)
             // InitService.contacts.push(onSuccess)
@@ -193,6 +348,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             var result = reponse.data.Data;
             if (!result.IsError) {
                 CommonUtils.SetToken(result.Data.Token);
+                app.closeModal(".login-screen");
             } else {
                 toastr.error(result.Message);
             }
@@ -201,12 +357,13 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     };
 
     $scope.GetOrders = function () {
-        CommonUtils.showWait(true);
+        
         var token = CommonUtils.GetToken();
         if (!token)
         { return; }
         var request = { Token: token }
         var urlPost = CommonUtils.RootUrl("api/Order/GetOrders");
+        CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
             var result = reponse.data.Data;
             if (!result.IsError) {
@@ -214,8 +371,86 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             } else {
                 toastr.error(result.Message);
             }
-            app.closeModal(".login-screen");
+          
+            CommonUtils.showWait(false);
         });
-        CommonUtils.showWait(false);
+      
+    };
+
+    $scope.GetPlaces = function () {
+
+        var token = CommonUtils.GetToken();
+        if (!token)
+        { return; }
+        var request = { Token: token }
+        var urlPost = CommonUtils.RootUrl("api/Order/GetPlaces");
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
+            var result = reponse.data.Data;
+            if (!result.IsError) {
+                $scope.Places = result.Data;
+            } else {
+                toastr.error(result.Message);
+            }
+
+            CommonUtils.showWait(false);
+        });
+
+    };
+
+    
+
+    $scope.AddOrUpdatePlace = function () {
+        
+        //MyApp.fw7.app
+        var token = CommonUtils.GetToken();
+        if (!token)
+        { return; }
+        var request = {
+            Token: token,
+            Name: $scope.Place.Name,
+            Address: $scope.Place.Address,
+            MenuUrl: $scope.Place.URL
+        };
+        var urlPost = CommonUtils.RootUrl("api/Order/AddOrUpdatePlace");
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
+            var result = reponse.data.Data;
+            if (!result.IsError) {
+                $scope.GetPlaces();
+                app.mainView.router.back();
+            } else {
+                toastr.error(result.Message);
+            }
+            CommonUtils.showWait(false);
+        });
+     
+    };
+
+    $scope.AddOrUpdatePlace = function () {
+
+        //MyApp.fw7.app
+        var token = CommonUtils.GetToken();
+        if (!token)
+        { return; }
+        var request = {
+            Token: token,
+            Name: $scope.Place.Name,
+            Address: $scope.Place.Address,
+            MenuUrl: $scope.Place.URL
+        };
+        var urlPost = CommonUtils.RootUrl("api/Order/AddOrUpdatePlace");
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
+            var result = reponse.data.Data;
+            if (!result.IsError) {
+                $scope.GetPlaces();
+                app.mainView.router.back();
+            } else {
+                toastr.error(result.Message);
+            }
+            CommonUtils.showWait(false);
+        });
+
     };
 }]);

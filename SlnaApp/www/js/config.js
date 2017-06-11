@@ -13,8 +13,9 @@ MyApp.angular = angular.module('MyApp', []);
 //});
 MyApp.fw7 = {
   app : new Framework7({
-     
-      material: true
+      angular: true,
+      material: true,
+      pushState: true,
   }),
   options : {
     dynamicNavbar: true,
