@@ -54,6 +54,8 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     var today = new Date();
     $scope.Contacts = [];
     app.onPageInit('addOrder', function (page) {
+
+        $scope.SelectFriends = [];
         // Default
         var calendarDefault = app.calendar({
             input: '#ks-calendar-default',
@@ -220,8 +222,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                 
                 $scope.Contacts.push({ displayName: n.displayName, email: n.emails[0] });
             });
-            console.log(hasEmail)
-            // InitService.contacts.push(onSuccess)
+          
         }, function (err) { debugger }, options);
 
     };
@@ -397,7 +398,26 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         });
 
     };
+    $scope.GetFriends = function () {
 
+        var token = CommonUtils.GetToken();
+        if (!token)
+        { return; }
+        var request = { Token: token }
+        var urlPost = CommonUtils.RootUrl("api/Account/GetFriends");
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
+            var result = reponse.data.Data;
+            if (!result.IsError) {
+                $scope.Friends = result.Data;
+            } else {
+                toastr.error(result.Message);
+            }
+
+            CommonUtils.showWait(false);
+        });
+
+    };
     
 
     $scope.AddOrUpdatePlace = function () {
@@ -427,7 +447,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
      
     };
 
-    $scope.AddOrUpdatePlace = function () {
+    $scope.AddOrUpdateFriend = function () {
 
         //MyApp.fw7.app
         var token = CommonUtils.GetToken();
@@ -435,16 +455,15 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         { return; }
         var request = {
             Token: token,
-            Name: $scope.Place.Name,
-            Address: $scope.Place.Address,
-            MenuUrl: $scope.Place.URL
+            FirstName: $scope.Friend.FirstName,
+            Email: $scope.Friend.Email,
+          
         };
-        var urlPost = CommonUtils.RootUrl("api/Order/AddOrUpdatePlace");
+        var urlPost = CommonUtils.RootUrl("api/Account/AddOrUpdateFriend");
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
             var result = reponse.data.Data;
             if (!result.IsError) {
-                $scope.GetPlaces();
                 app.mainView.router.back();
             } else {
                 toastr.error(result.Message);
@@ -453,4 +472,33 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         });
 
     };
+   
+    $scope.SelectFriendClick = function (data) {
+        data.IsSelected = !data.IsSelected;
+        var exist = $.grep($scope.SelectFriends, function (n, i) {
+            return n.Email == data.Email;
+        });
+        if (exist.length <= 0) {
+            if (data.IsSelected) {
+                $scope.SelectFriends.push(data);
+            }
+        } else {
+            if (!data.IsSelected) {
+                $scope.SelectFriends = $.grep($scope.SelectFriends, function (n, i) {
+                    return n.Email != data.Email;
+                });
+            }
+        }
+    };
+
+    $scope.SelectedOK = function () {
+        app.mainView.router.back();
+    };
+
+    $scope.RemoveFriendSelected = function (data) {
+        $scope.SelectFriends = $.grep($scope.SelectFriends, function (n, i) {
+            return n.Email != data.Email;
+        });
+    };
+
 }]);

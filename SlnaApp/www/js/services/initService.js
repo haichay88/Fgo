@@ -201,15 +201,13 @@ MyApp.angular.factory('InitService', ['$document', function ($document) {
       options.multiple = true;
       var filter = ["displayName", "emails"];
       navigator.contacts.find(filter, function (onSuccess) {
-          console.log(onSuccess)
           var hasEmail = $.grep(onSuccess, function (n, i) {
               return n.emails && n.displayName;
           });
           $.each(hasEmail, function (i, n) {
               Contacts.push({ displayName: n.displayName, email: n.emails[0] });
           });
-          console.log(hasEmail)
-          // InitService.contacts.push(onSuccess)
+          
       }, function (err) { debugger }, options);
 
   };

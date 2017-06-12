@@ -95,7 +95,7 @@
     <!-- Views-->
     <div class="views" >
         <!-- Your main view, should have "view-main" class-->
-        <div class="view view-main">
+        <div class="view view-main" ng-controller="IndexPageController">
             <div class="pages navbar-fixed">
                 <div data-page="index" class="page">
                     <!-- Top Navbar-->
@@ -114,7 +114,7 @@
                         <i class="icon icon-plus"></i>
                     </a>
                     <!-- Scrollable page content-->
-                    <div class="page-content" ng-controller="IndexPageController">
+                    <div class="page-content" >
                         <div class="list-block media-list" ng-init="GetOrders()">
                             <ul>
                                 <li ng-repeat="item in Orders">

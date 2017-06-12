@@ -1,0 +1,47 @@
+﻿<div data-page="addFriend" class="page" ng-controller="IndexPageController" ng-cloak>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="left"><a href="#" class="back link"> <i class="icon icon-back"></i><span></span></a></div>
+            <div class="center "> New a Friend</div>
+            <div class="right">
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scrollable page content-->
+    <div class="page-content">
+        <div class="list-block inputs-list">
+            <ul>
+                <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title floating-label">Full Name </div>
+                            <div class="item-input">
+                                <input type="text" placeholder="name your friend" ng-model="Friend.FirstName" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title floating-label">Email </div>
+                            <div class="item-input">
+                                <input type="text" placeholder="Email" ng-model="Friend.Email" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="content-block">
+            <div class="row">
+                <div class="col-100">
+                    <input type="submit" value="Save" ng-click="AddOrUpdateFriend()" class="button button-raised button-fill color-green" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
