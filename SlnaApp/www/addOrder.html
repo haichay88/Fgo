@@ -20,7 +20,7 @@
                         <div class="item-inner">
                             <div class="item-title floating-label">Title</div>
                             <div class="item-input">
-                                <input type="text" placeholder="Your title" />
+                                <input type="text" ng-model="Invite.Title" placeholder="Your title" />
                             </div>
                         </div>
                     </div>
@@ -64,7 +64,7 @@
         <div class="content-block">
             <div class="row">
                 <div class="col-100">
-                    <input type="submit" value="Save" class="button button-raised button-fill color-green" />
+                    <input type="submit" ng-click="InviteClick()" value="Save" class="button button-raised button-fill color-green" />
                 </div>
             </div>
         </div>

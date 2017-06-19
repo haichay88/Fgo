@@ -54,7 +54,13 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     var today = new Date();
     $scope.Contacts = [];
     app.onPageInit('addOrder', function (page) {
-
+        $scope.Invite = {
+            PlaceId: undefined,
+            Title: undefined,
+            LunchDate: undefined,
+            Friends: [],
+            Token: undefined
+        };
         $scope.SelectFriends = [];
         // Default
         var calendarDefault = app.calendar({
@@ -75,6 +81,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                 }
             },
             formatValue: function (p, values, displayValues) {
+                $scope.Invite.LunchDate = values[0] + '/' + values[1] + '/' + values[2] + ' ' + values[3] + ':' + values[4];
                 return values[1] + '/' + values[0] + '/' + values[2] + ' ' + values[3] + ':' + values[4];
             },
             cols: [
@@ -125,31 +132,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             ]
         });
 
-        // Multiple Standalone
-        var autocompleteStandaloneMultiple = app.autocomplete({
-            openIn: 'page', //open in page
-            opener: $('#autocomplete-standalone-multiple'), //link that opens autocomplete
-            multiple: true, //allow multiple values
-            source: function (autocomplete, query, render) {
-                var results = [];
-                if (query.length === 0) {
-                    render(results);
-                    return;
-                }
-                // Find matched items
-                for (var i = 0; i < $scope.Contacts.length; i++) {
-                    if ($scope.Contacts[i].displayName.toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push($scope.Contacts[i].displayName);
-                }
-                // Render items by passing array with result items
-                render(results);
-            },
-            onChange: function (autocomplete, value) {
-                // Add item text value to item-after
-                $('#autocomplete-standalone-multiple').find('.item-after').text(value.join(', '));
-                // Add item value to input value
-                $('#autocomplete-standalone-multiple').find('input').val(value.join(', '));
-            }
-        });
+       
 
         // Dropdown with ajax data
         var autocompleteDropdownAjax = app.autocomplete({
@@ -184,7 +167,10 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                         var result = data.Data.Data;
                         // Find matched items
                         for (var i = 0; i < result.length; i++) {
-                            if (result[i].Name.toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(result[i].Name);
+                            if (result[i].Name.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+                                $scope.Invite.PlaceId = result[i].Id;
+                                results.push(result[i].Name);
+                            } 
                         }
                         // Hide Preoloader
                         autocomplete.hidePreloader();
@@ -192,6 +178,8 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                         render(results);
                     }
                 });
+            },
+            onChange: function (autocomplete, value) {
             }
         });
 
@@ -356,7 +344,35 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
         });
     };
+    $scope.InviteClick = function () {
+        if (!$scope.Invite.Title) {
+            toastr.error("Please input title !");
+            return;
+        }
 
+        var token = CommonUtils.GetToken();
+        if (!token)
+        { return; }
+        $scope.Invite.Token = token;
+        var urlPost = CommonUtils.RootUrl("api/Order/AddInvite");
+        $scope.Invite.Friends = $scope.SelectFriends;
+        if (!$scope.Invite.Friends) {
+            toastr.error("Please choose friends !");
+            return;
+        }
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, $scope.Invite, function (reponse) {
+            var result = reponse.data.Data;
+            if (!result.IsError) {
+                $scope.GetOrders();
+                app.mainView.router.back();
+                //$scope.Orders = result.Data;
+            } else {
+                toastr.error(result.Message);
+            }
+            CommonUtils.showWait(false);
+        });
+    };
     $scope.GetOrders = function () {
         
         var token = CommonUtils.GetToken();
