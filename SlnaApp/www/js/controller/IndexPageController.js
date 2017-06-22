@@ -197,6 +197,10 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         });
 
     });
+    
+    $scope.showListOrderItem = function () {
+        app.pickerModal('.demo-popup');
+    };
     $scope.getContacts = function () {
         var options = new ContactFindOptions();
         options.filter = "";
@@ -393,7 +397,28 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         });
       
     };
+    $scope.GetOrder = function (val) {
 
+        var orderId = val;
+
+        var token = CommonUtils.GetToken();
+        if (!token)
+        { return; }
+        var request = { Token: token, Id: orderId };
+        var urlPost = CommonUtils.RootUrl("api/Order/GetOrder");
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
+            var result = reponse.data.Data;
+            if (!result.IsError) {
+                $scope.Order = result.Data
+                app.mainView.router.loadPage('InviteDetail.html')
+            } else {
+                toastr.error(result.Message);
+            }
+            CommonUtils.showWait(false);
+        });
+
+    };
     $scope.GetPlaces = function () {
 
         var token = CommonUtils.GetToken();

@@ -1,0 +1,36 @@
+﻿<div data-page="orders" class="page">
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="left"><a href="#" class="back link"> <i class="icon icon-back"></i><span></span></a></div>
+            <div class="center "> you choose</div>
+            <div class="right">
+                <a href="#" class="link" ng-show="SelectFriends.length>0" ng-click="SelectedOK()">
+                    <i class="icon material-icons">check</i>
+                </a>
+                <a href="addFriend.html" class="link"><i class="icon material-icons">add</i></a>
+            </div>
+        </div>
+    </div>
+   
+    <!-- Scrollable page content-->
+    <div class="page-content">
+        
+        <div class="list-block media-list">
+            <ul>
+                <li ng-repeat="item in Order.OrderDetailsCanEdit" class="swipeout">
+                    <div class="item-content swipeout-content">
+                        <div class="item-inner">
+                            <div class="item-title-row">
+                                <div class="item-title">{{item.MenuItem}}</div>
+                                <div class="item-after">{{item.MenuCost|number}}</div>
+                            </div>
+                        </div>
+                        <div class="swipeout-actions-right"><a href="#" class="swipeout-delete">Delete</a></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+    </div>
+</div>

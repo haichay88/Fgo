@@ -118,7 +118,7 @@
                         <div class="list-block media-list" ng-init="GetOrders()">
                             <ul>
                                 <li ng-repeat="item in Orders">
-                                    <a href="#" class="item-link item-content">
+                                    <a href="#" class="item-link item-content" ng-click="GetOrder(item.Id)">
                                         <div class="item-inner">
                                             <div class="item-title-row">
                                                 <div class="item-title">{{item.Title}}</div>
