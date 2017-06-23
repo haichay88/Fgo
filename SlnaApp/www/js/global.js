@@ -22,5 +22,11 @@
         SetToken: function (val) {
             localStorage.setItem("token", val);
         },
+        showErrorMessage: function (msg) {
+            MyApp.fw7.app.addNotification({
+                message: msg,
+                hold:1500
+            });
+        }
        
     };

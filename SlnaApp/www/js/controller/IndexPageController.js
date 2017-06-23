@@ -17,7 +17,11 @@ MyApp.angular.service('FgoService', function ($http) {
             data: model,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-        }).then(callback);
+        }).then(callback)
+            .catch(function (err) {
+                CommonUtils.showErrorMessage(err.statusText);            
+                CommonUtils.showWait(false);
+            });
     };
 
 });
@@ -53,6 +57,14 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     });
     var today = new Date();
     $scope.Contacts = [];
+   
+    app.onPageInit('searchFriend', function (page) {
+        $scope.SelectFriends = [];
+    });
+    app.onPageInit('InviteDetail', function (page) {
+        $scope.SelectFriends = [];
+    });
+
     app.onPageInit('addOrder', function (page) {
         $scope.Invite = {
             PlaceId: undefined,
@@ -198,9 +210,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
     });
     
-    $scope.showListOrderItem = function () {
-        app.pickerModal('.demo-popup');
-    };
+    
     $scope.getContacts = function () {
         var options = new ContactFindOptions();
         options.filter = "";
@@ -377,6 +387,35 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             CommonUtils.showWait(false);
         });
     };
+
+    $scope.InviteMoreClick = function () {
+       
+        var token = CommonUtils.GetToken();
+        if (!token)
+        { return; }
+        var urlPost = CommonUtils.RootUrl("api/Order/AddMoreFriend");
+        if (!$scope.SelectFriends) {
+            toastr.error("Please choose friends !");
+            return;
+        }
+        
+        var request = {
+            Token: token,
+            Friends: $scope.SelectFriends,
+            OrderId: $scope.currentOrderId
+        };
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
+            var result = reponse.data.Data;
+            if (!result.IsError) {
+                $scope.GetOrder($scope.currentOrderId);
+                $scope.SelectFriends = [];
+            } else {
+                CommonUtils.showErrorMessage(result.Message);
+            }
+            CommonUtils.showWait(false);
+        });
+    };
     $scope.GetOrders = function () {
         
         var token = CommonUtils.GetToken();
@@ -397,14 +436,15 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         });
       
     };
+   
     $scope.GetOrder = function (val) {
 
-        var orderId = val;
+        $scope.currentOrderId = val;
 
         var token = CommonUtils.GetToken();
         if (!token)
         { return; }
-        var request = { Token: token, Id: orderId };
+        var request = { Token: token, Id: $scope.currentOrderId };
         var urlPost = CommonUtils.RootUrl("api/Order/GetOrder");
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
@@ -419,6 +459,24 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         });
 
     };
+    $scope.AddOrderDetail = function () {
+        
+        $scope.Order.OrderDetails = $scope.Order.OrderDetailsCanEdit;
+        $scope.Order.Token = CommonUtils.GetToken();
+        var urlPost = CommonUtils.RootUrl("api/Order/AddOrderDetail");
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, $scope.Order, function (reponse) {
+            var result = reponse.data.Data;
+            if (!result.IsError) {
+                $scope.Order = result.Data
+                app.mainView.router.loadPage('InviteDetail.html')
+            } else {
+                toastr.error(result.Message);
+            }
+            CommonUtils.showWait(false);
+        });
+    };
+
     $scope.GetPlaces = function () {
 
         var token = CommonUtils.GetToken();
@@ -459,8 +517,17 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         });
 
     };
-    
-
+    $scope.AddToMyMenuClient = function () {
+        if ($scope.Menu.MenuItem || $scope.Menu.MenuCost)
+            $scope.Order.OrderDetailsCanEdit.push({ MenuItem: $scope.Menu.MenuItem, MenuCost: $scope.Menu.MenuCost });
+        $scope.Menu = {};
+        app.mainView.router.back();
+    };
+    $scope.RemoveItem = function (val) {
+        $scope.Order.OrderDetailsCanEdit = $.grep($scope.Order.OrderDetailsCanEdit, function (i, n) {
+            return n != val;
+        });
+    };
     $scope.AddOrUpdatePlace = function () {
         
         //MyApp.fw7.app
@@ -541,5 +608,6 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             return n.Email != data.Email;
         });
     };
-
+    
+    
 }]);

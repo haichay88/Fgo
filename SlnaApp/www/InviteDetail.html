@@ -2,19 +2,68 @@
 <!-- Top Navbar-->
 <!-- Page, data-page contains page name-->
 
-<div data-page="InviteDetail" class="page">
+<div data-page="InviteDetail" class="page" ng-cloak>
     <div class="navbar">
         <div class="navbar-inner">
-            <div class="left"><a href="index.html" class="back link icon-only"><i class="icon icon-back"></i></a></div>
-            <div class="center">Invite detail</div>
-            <!--<div class="right"><a href="#" class="link open-panel icon-only"><i class="icon icon-bars"></i></a></div>-->
+            <div class="left"><a href="index.html" class="back link"><i class="icon icon-back"></i></a></div>
+            <div class="center">{{Order.Title}} - {{Order.LunchDateText}}</div>
+            <!--<div class="right">
+               
+                
+            </div>-->
         </div>
     </div>
+    <!--<div class="toolbar toolbar-bottom">
+        <div class="toolbar-inner">
+            <a href="#" class="link"><i class="icon material-icons">check_circle</i></a>
+            <a href="#" class="link"><i class="icon material-icons">message</i></a>
+            <a href="searchFriend.html" class="link">
+                <i class="icon material-icons">person <sup>add</sup></i>
+            </a>
+        </div>
+    </div>-->
 
     <!-- Scrollable page content-->
     <div class="page-content">
+        <div class="card" ng-hide="Order.OrderDetailsCanEdit.length>0">
+            <div class="card-header">Enter what you want:</div>
+            <div class="card-content">
+                <div class="card-content-inner">
+                    <div class="list-block inputs-list">
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title floating-label">enter a item on menu</div>
+                                        <div class="item-input">
+                                            <input type="text" placeholder="enter a item on menu" ng-model="Menu.MenuItem" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title floating-label">How much does it cost? </div>
+                                        <div class="item-input">
+                                            <input type="text" placeholder="cost" ng-model="Menu.MenuCost" format="number" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="card-footer">
+                <input type="submit" value="Save" ng-click="AddToMyMenuClient();AddOrderDetail()" class="button button-raised button-fill color-green" />
+                
+            </div>
+        </div>
+
         <div class="card">
-            <div class="card-header">{{Order.OwnerName}} Đã tạo 1 cuộc hẹn: {{Order.Title}} - {{Order.LunchDateText}}</div>
+           
             <div class="card-content">
                 <div class="list-block media-list">
                     <ul>
@@ -43,18 +92,25 @@
                         </li>
                     </ul>
                 </div>
-                
+              
             </div>
-          
+            <div class="card-footer">Created by {{Order.OwnerName}}</div>
         </div>
-        <div class="content-block">
-            <div class="row">
-                <div class="col-100">
-                    <input type="submit" ng-click="InviteClick()" value="Save" class="button button-raised button-fill color-green" />
+       
+        <div class="card" >
+            <div class="card-header">More friend <a href="searchFriend.html" class="link"> <i class="icon material-icons">person <sup>add</sup></i></a></div>
+            <div class="card-content" ng-show="SelectFriends.length>0">
+                <div class="card-content-inner">
+                    <div class="chip" ng-repeat="item in SelectFriends" ng-click="RemoveFriendSelected(item)">
+                        <div class="chip-label">{{item.FirstName}}</div>
+                    </div>
                 </div>
             </div>
+            <div class="card-footer"  ng-show="SelectFriends.length>0">
+                <input type="submit"  value="Invite" ng-click="InviteMoreClick()" class="button button-raised button-fill color-green" />
+            </div>
+            
         </div>
-        
         
     </div>
     

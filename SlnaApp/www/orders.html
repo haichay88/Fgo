@@ -1,13 +1,13 @@
 ﻿<div data-page="orders" class="page">
     <div class="navbar">
         <div class="navbar-inner">
-            <div class="left"><a href="#" class="back link"> <i class="icon icon-back"></i><span></span></a></div>
-            <div class="center "> you choose</div>
+            <div class="left"><a href="#" class="back link" ng-click="GetOrder(currentOrderId)" > <i class="icon icon-back"></i><span></span></a></div>
+            <div class="center "> your choose</div>
             <div class="right">
-                <a href="#" class="link" ng-show="SelectFriends.length>0" ng-click="SelectedOK()">
+                <a href="#" class="link"  ng-click="AddOrderDetail()">
                     <i class="icon material-icons">check</i>
                 </a>
-                <a href="addFriend.html" class="link"><i class="icon material-icons">add</i></a>
+                <a href="addMenu.html" class="link"><i class="icon material-icons">add</i></a>
             </div>
         </div>
     </div>
@@ -25,7 +25,7 @@
                                 <div class="item-after">{{item.MenuCost|number}}</div>
                             </div>
                         </div>
-                        <div class="swipeout-actions-right"><a href="#" class="swipeout-delete">Delete</a></div>
+                        <div class="swipeout-actions-right"><a href="#" class="swipeout-delete" ng-click="RemoveItem($index)">Delete</a></div>
                     </div>
                 </li>
             </ul>

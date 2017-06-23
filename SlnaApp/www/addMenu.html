@@ -1,8 +1,8 @@
-﻿<div data-page="addFriend" class="page"  ng-cloak>
+﻿<div data-page="addMenu" class="page" ng-cloak>
     <div class="navbar">
         <div class="navbar-inner">
             <div class="left"><a href="#" class="back link"> <i class="icon icon-back"></i><span></span></a></div>
-            <div class="center "> New a Friend</div>
+            <div class="center "> New a menu</div>
             <div class="right">
 
             </div>
@@ -16,9 +16,9 @@
                 <li>
                     <div class="item-content">
                         <div class="item-inner">
-                            <div class="item-title floating-label">Full Name </div>
+                            <div class="item-title floating-label">Menu item</div>
                             <div class="item-input">
-                                <input type="text" placeholder="name your friend" ng-model="Friend.FirstName" />
+                                <input type="text" placeholder="name your friend" ng-model="Menu.MenuItem" />
                             </div>
                         </div>
                     </div>
@@ -26,9 +26,9 @@
                 <li>
                     <div class="item-content">
                         <div class="item-inner">
-                            <div class="item-title floating-label">Email </div>
+                            <div class="item-title floating-label">Cost </div>
                             <div class="item-input">
-                                <input type="text" placeholder="Email" ng-model="Friend.Email" />
+                                <input type="text" placeholder="Email" ng-model="Menu.MenuCost" format="number" />
                             </div>
                         </div>
                     </div>
@@ -38,7 +38,7 @@
         <div class="content-block">
             <div class="row">
                 <div class="col-100">
-                    <input type="submit" value="Save" ng-click="AddOrUpdateFriend()" class="button button-raised button-fill color-green" />
+                    <input type="submit" value="Save" ng-click="AddToMyMenuClient()" class="button button-raised button-fill color-green" />
                 </div>
             </div>
         </div>
