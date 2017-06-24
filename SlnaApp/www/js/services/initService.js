@@ -28,9 +28,13 @@ MyApp.angular.factory('InitService', ['$document', function ($document) {
 
 
     var token = CommonUtils.GetToken();
-    if (token !== null) {
-        // If already logged in
-        fw7.app.closeModal(".login-screen");
+    if (token == null) {
+        // If logined not yet
+        fw7.app.mainView.router.load(
+            { url: 'login.html', ignoreCache: true, reload: true });
+        //fw7.app.router.load({
+        //    url: 'login.html'
+        //});
     } else
         CommonUtils.showWait(false);
     

@@ -64,6 +64,14 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     app.onPageInit('InviteDetail', function (page) {
         $scope.SelectFriends = [];
     });
+   
+    app.onPageInit('addPlace', function (page) {
+        $scope.Place = {
+            Longitude: undefined,
+            Latitude: undefined
+        };
+    });
+ 
 
     app.onPageInit('addOrder', function (page) {
         $scope.Invite = {
@@ -154,7 +162,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             valueProperty: 'id', //object's "value" property name
             textProperty: 'name', //object's "text" property name
             limit: 20, //limit to 20 results
-            dropdownPlaceholderText: 'Try "JavaScript"',
+            dropdownPlaceholderText: 'Enter a place',
             source: function (autocomplete, query, render) {
                 var results = [];
                 if (query.length === 0) {
@@ -230,26 +238,33 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     };
    
     $scope.getLocation = function () {
+        
         navigator.geolocation.getCurrentPosition(function (position) {
+            debugger
             console.log('getCurrentPosition: ' + position.coords.longitude);
-            $scope.Hotel.Longitude = position.coords.longitude;
-            $scope.Hotel.Latitude = position.coords.latitude;
+            $scope.Place.Longitude = position.coords.longitude;
+            $scope.Place.Latitude = position.coords.latitude;
             var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude + "," + position.coords.longitude + "&key=AIzaSyDf7hUxmzsiDyklIfcM93ESrtZXmG9Dqq4";
 
-            HotelService.AjaxGet(
+            FgoService.AjaxGet(
                 url,
                 function (pl) {
-                    $scope.Hotel.Address = pl.data.results[0].formatted_address;
-                    toastr.success($scope.Hotel.Address);
+                    debugger
+                    $scope.Place.Address = pl.data.results[0].formatted_address;
+                    toastr.success($scope.Place.Address);
 
                 });
-            console.log('$scope.Hotel.Address: ' + $scope.Hotel.Address);
+            console.log('$scope.Hotel.Address: ' + $scope.Place.Address);
 
         }, function (error) {
+            debugger
             alert('code: ' + error.code + '\n' +
             'message: ' + error.message + '\n');
         }, {
-            enableHighAccuracy: true,
+                enableHighAccuracy: true,
+                maximumAge: 30000,
+                timeout: 27000
+
         });
 
     };
@@ -347,17 +362,28 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         }
         $scope.User.Password = CryptoJS.MD5($scope.User.Password).toString();
         var urlPost = CommonUtils.RootUrl("api/Account/Login");
+        CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, $scope.User, function (reponse) {
             var result = reponse.data.Data;
             if (!result.IsError) {
                 CommonUtils.SetToken(result.Data.Token);
-                app.closeModal(".login-screen");
+               
+                app.mainView.router.loadPage('index.html')
             } else {
                 toastr.error(result.Message);
             }
-
+            CommonUtils.showWait(false);
         });
     };
+    $scope.SingOut = function () {
+
+        CommonUtils.RemoveToken();
+        app.mainView.router.loadPage('login.html')
+        
+    };
+
+
+
     $scope.InviteClick = function () {
         if (!$scope.Invite.Title) {
             toastr.error("Please input title !");

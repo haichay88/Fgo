@@ -1,6 +1,8 @@
-﻿<div data-page="login-screen" class="page no-navbar no-toolbar no-swipeback">
+﻿<div data-page="login" class="page no-navbar no-toolbar no-swipeback">
     <div class="page-content login-screen-content">
-        <div class="login-screen-title">My App</div>
+        <div class="login-screen-title">
+            <img src="images/lgo-fgo.png" style="width:80%" />
+        </div>
         <form>
             <div class="list-block">
                 <ul>
@@ -8,7 +10,7 @@
                         <div class="item-inner">
                             <div class="item-title label">Username</div>
                             <div class="item-input">
-                                <input type="text" name="username" placeholder="Your username" />
+                                <input type="text" name="username" placeholder="Your username" ng-model="User.Email" />
                             </div>
                         </div>
                     </li>
@@ -16,18 +18,24 @@
                         <div class="item-inner">
                             <div class="item-title label">Password</div>
                             <div class="item-input">
-                                <input type="password" name="password" placeholder="Your password" />
+                                <input type="password" name="password" placeholder="Your password" ng-model="User.Password" />
                             </div>
                         </div>
                     </li>
                 </ul>
             </div>
-            <div class="list-block">
-                <ul>
-                    <li><a href="#" class="item-link list-button">Sign In</a></li>
-                </ul>
-                <div class="list-block-label">
-                    <p>Click Sign In to close Login Screen</p>
+            <div class="content-block">
+                <div class="row">
+                    <div class="col-100">
+                        <input type="submit" ng-click="Singin()" value="Sign in" class="button button-raised button-fill color-cyan" />
+                    </div>
+                </div>
+            </div>
+            <div class="content-block">
+                <div class="row">
+                    <div class="col-100">
+                        <input type="submit" value="Login with Facebook" class="button button-raised button-fill color-indigo" />
+                    </div>
                 </div>
             </div>
         </form>

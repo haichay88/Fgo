@@ -3,12 +3,12 @@
         showWait: function (val) {
             if (val)
                 //$('#loading').show();
-                MyApp.fw7.app.showIndicator();
+                MyApp.fw7.app.showPreloader();
             else {
                 //setTimeout(function () {
                 //    $('#loading').hide();
                 //}, 1000);
-                MyApp.fw7.app.hideIndicator();
+                MyApp.fw7.app.hidePreloader();
             }
                
         },
@@ -21,6 +21,9 @@
         },
         SetToken: function (val) {
             localStorage.setItem("token", val);
+        },
+        RemoveToken: function (val) {
+            localStorage.removeItem("token");
         },
         showErrorMessage: function (msg) {
             MyApp.fw7.app.addNotification({

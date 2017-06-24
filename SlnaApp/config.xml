@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<widget xmlns:cdv="http://cordova.apache.org/ns/1.0"
-        xmlns:vs="http://schemas.microsoft.com/appx/2014/htmlapps"
-         xmlns:android="http://schemas.android.com/apk/res/android" id="myfinance.tikasa.checkin" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" defaultlocale="en-US">
+<widget xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:vs="http://schemas.microsoft.com/appx/2014/htmlapps" xmlns:android="http://schemas.android.com/apk/res/android" id="myfinance.tikasa.checkin" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" defaultlocale="en-US">
   <name>BizkasaSystem</name>
   <description>A blank project that uses Apache Cordova to help you build an app that targets multiple mobile platforms: Android, iOS, Windows, and Windows Phone.</description>
   <author href="http://cordova.io" email="dev@cordova.apache.org">Apache Cordova Team </author>
@@ -14,6 +12,9 @@
     <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
     <param name="onload" value="true" />
   </feature>
+  <feature name="Geolocation">
+    <param name="android-package" value="org.apache.cordova.GeoBroker" />
+  </feature>
   <preference name="windows-target-version" value="10.0" />
   <!-- Support for Cordova 5.0.0 plugin system -->
   <plugin name="cordova-plugin-whitelist" version="1" />
@@ -25,10 +26,14 @@
   <allow-intent href="geo:*" />
   <platform name="android">
     <allow-intent href="market:*" />
-     <config-file target="AndroidManifest.xml" parent="/*">
-         <uses-permission android:name="android.permission.INTERNET" />
-         <!--<uses-permission android:name="android.permission.NETWORK_ACCESS" />
-             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <config-file target="AndroidManifest.xml" parent="/*">
+      <uses-permission android:name="android.permission.INTERNET" />
+      <uses-permission android:name="android.permission.NETWORK_ACCESS" />
+      <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+      <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     </config-file>
   </platform>
   <platform name="ios">
@@ -118,7 +123,6 @@
   <platform name="wp8">
     <splash src="res/screens/wp8/SplashScreenImage.png" width="768" height="1280" />
   </platform>
-  <plugin name="cordova-plugin-geolocation" version="2.3.0" />
   <plugin name="cordova-plugin-compat" version="1.0.0" />
   <plugin name="cordova-plugin-file-transfer" version="1.6.0" />
   <plugin name="cordova-plugin-file" version="4.3.0" />
@@ -129,4 +133,5 @@
   <engine name="windows" spec="4.4.2" />
   <plugin name="cordova-plugin-splashscreen" spec="~4.0.3" />
   <plugin name="cordova-plugin-contacts" spec="~2.3.1" />
+  <plugin name="cordova-plugin-geolocation" spec="~2.4.3" />
 </widget>

@@ -15,7 +15,7 @@ MyApp.fw7 = {
   app : new Framework7({
       angular: true,
       material: true,
-      pushState: true,
+      pushState: false,
   }),
   options : {
     dynamicNavbar: true,
