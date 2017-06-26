@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "428508293765",
+    "firebase_url": "https://fgoapp-665da.firebaseio.com",
+    "project_id": "fgoapp-665da",
+    "storage_bucket": "fgoapp-665da.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:428508293765:android:2b312c2acd0cc948",
+        "android_client_info": {
+          "package_name": "com.fgo.now"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "428508293765-sr6avif0pc8uc56ijco7mj45i7hagn7f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyivWr4pvWYIII9OhQ7XbrpFcxtb1H1Qk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

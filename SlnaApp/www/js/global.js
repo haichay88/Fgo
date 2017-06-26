@@ -19,6 +19,9 @@
             var context = localStorage.getItem('token');
             return context;
         },
+        GetDeviceKey: function () {
+            return localStorage.getItem('registrationId');
+        },
         SetToken: function (val) {
             localStorage.setItem("token", val);
         },

@@ -42,7 +42,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         // MyApp.fw7.app
         
 
-
+        setupPush();
 
 
         $scope.Hotel = {
@@ -55,6 +55,39 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         };
 
     });
+
+    function setupPush() {
+        var push = PushNotification.init({
+            "android": {
+                "senderID": "428508293765"
+            },
+            "ios": {
+                "sound": true,
+                "alert": true,
+                "badge": true
+            },
+            "windows": {}
+        });
+
+        push.on('registration', function (data) {
+            console.log("registration event: " + data.registrationId);
+            var oldRegId = localStorage.getItem('registrationId');
+            if (oldRegId !== data.registrationId) {
+                // Save new registration ID
+                localStorage.setItem('registrationId', data.registrationId);
+                // Post registrationId to your app server as the value has changed
+            }
+        });
+
+        push.on('notification', function(data) {
+         console.log(data);
+         
+     });
+
+        push.on('error', function (e) {
+            console.log("push error = " + e.message);
+        });
+    }
     var today = new Date();
     $scope.Contacts = [];
    
@@ -351,7 +384,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
 
     };
-    $scope.Singin = function () {
+    $scope.SignIn = function () {
         if (!$scope.User.Email) {
             toastr.error("Username invalid!");
             return;
@@ -362,8 +395,14 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         }
         $scope.User.Password = CryptoJS.MD5($scope.User.Password).toString();
         var urlPost = CommonUtils.RootUrl("api/Account/Login");
+        var request={
+            Email:$scope.User.Email,
+            Password:$scope.User.Password,
+            DeviceKey:CommonUtils.GetDeviceKey()
+        };
+        debugger
         CommonUtils.showWait(true);
-        FgoService.AjaxPost(urlPost, $scope.User, function (reponse) {
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
             var result = reponse.data.Data;
             if (!result.IsError) {
                 CommonUtils.SetToken(result.Data.Token);
@@ -375,14 +414,47 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             CommonUtils.showWait(false);
         });
     };
-    $scope.SingOut = function () {
+    $scope.SignOut = function () {
 
         CommonUtils.RemoveToken();
         app.mainView.router.loadPage('login.html')
         
     };
+    $scope.SignUp = function () {
 
+        if (!$scope.Register.Email) {
+            toastr.error("Username invalid!");
+            return;
+        }
+        if (!$scope.Register.Password) {
+            toastr.error("Password invalid !");
+            return;
+        }
 
+        if ($scope.Register.Password != $scope.Register.ConfirmPassword) {
+            toastr.error("Password not match Confirm password !");
+            return;
+        }
+        $scope.Register.Password = CryptoJS.MD5($scope.Register.Password).toString();
+        var request = {
+            Email: $scope.Register.Email,
+            Password: $scope.Register.Password,
+            DeviceKey: CommonUtils.GetDeviceKey()
+        };
+        var urlPost = CommonUtils.RootUrl("api/Account/SignUp");
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
+            var result = reponse.data.Data;
+            if (!result.IsError) {
+                CommonUtils.SetToken(result.Data.Token);
+                app.mainView.router.loadPage('index.html')
+            } else {
+                CommonUtils.showErrorMessage(result.Message);
+            }
+            CommonUtils.showWait(false);
+        });
+
+    };
 
     $scope.InviteClick = function () {
         if (!$scope.Invite.Title) {

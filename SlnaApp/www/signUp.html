@@ -1,0 +1,52 @@
+﻿<div data-page="signUp" class="page no-navbar no-toolbar no-swipeback">
+    <div class="page-content login-screen-content">       
+        <form>
+            <div class="list-block">
+                <ul>
+                    <li class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title label">Username</div>
+                            <div class="item-input">
+                                <input type="text" name="username" placeholder="Enter an valid email" ng-model="Register.Email" />
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title label">Password</div>
+                            <div class="item-input">
+                                <input type="password" placeholder="Your password" ng-model="Register.Password" />
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title label">Confirm Password</div>
+                            <div class="item-input">
+                                <input type="password"  placeholder="confirm password" ng-model="Register.ConfirmPassword" />
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="content-block">
+                <div class="row">
+                    <div class="col-100">
+                        <input type="submit" ng-click="SignUp()" value="Sign Up" class="button button-raised button-fill color-cyan" />
+                    </div>
+                </div>
+            </div>
+           
+            <div class="content-block">
+                <div class="row ">
+                    <div class="col-50" style="text-align:center">
+                        <a href="login.html">Go back signin</a>
+                    </div>
+                    <div class="col-50" style="text-align:center">
+                        <a href="forgetPassword.html" value="">Forget password?</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
