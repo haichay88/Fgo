@@ -10,6 +10,7 @@
         "cordova-plugin-splashscreen": "~4.0.3",
         "cordova-plugin-whitelist": "~1.3.2",
         "cordova-windows": "4.4.2",
+        "geolocation": "file:node_modules\\Geolocation",
         "phonegap-plugin-push": "^1.10.5"
     },
     "cordovaPlugins": [

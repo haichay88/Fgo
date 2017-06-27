@@ -13,7 +13,7 @@
         <param name="onload" value="true" />
     </feature>
     <feature name="Geolocation">
-        <param name="android-package" value="org.apache.cordova.GeoBroker" />
+        <param name="android-package" value="org.apache.cordova.geolocation.Geolocation" />
     </feature>
     <preference name="windows-target-version" value="10.0" />
     <allow-intent href="http://*/*" />

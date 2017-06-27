@@ -269,36 +269,29 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         }, function (err) { debugger }, options);
 
     };
-   
+   var onSuccess = function(position) {
+    console.log(position);
+        alert('Latitude: '          + position.coords.latitude          + '\n' +
+              'Longitude: '         + position.coords.longitude         + '\n' +
+              'Altitude: '          + position.coords.altitude          + '\n' +
+              'Accuracy: '          + position.coords.accuracy          + '\n' +
+              'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+              'Heading: '           + position.coords.heading           + '\n' +
+              'Speed: '             + position.coords.speed             + '\n' +
+              'Timestamp: '         + position.timestamp                + '\n');
+    };
+
+    // onError Callback receives a PositionError object
+    //
+    function onError(error) {
+       console.log(error);
+        alert('code: '    + error.code    + '\n' +
+              'message: ' + error.message + '\n');
+    }
     $scope.getLocation = function () {
-        
-        navigator.geolocation.getCurrentPosition(function (position) {
-            debugger
-            console.log('getCurrentPosition: ' + position.coords.longitude);
-            $scope.Place.Longitude = position.coords.longitude;
-            $scope.Place.Latitude = position.coords.latitude;
-            var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude + "," + position.coords.longitude + "&key=AIzaSyDf7hUxmzsiDyklIfcM93ESrtZXmG9Dqq4";
-
-            FgoService.AjaxGet(
-                url,
-                function (pl) {
-                    debugger
-                    $scope.Place.Address = pl.data.results[0].formatted_address;
-                    toastr.success($scope.Place.Address);
-
-                });
-            console.log('$scope.Hotel.Address: ' + $scope.Place.Address);
-
-        }, function (error) {
-            debugger
-            alert('code: ' + error.code + '\n' +
-            'message: ' + error.message + '\n');
-        }, {
-                enableHighAccuracy: true,
-                maximumAge: 30000,
-                timeout: 27000
-
-        });
+      
+        navigator.geolocation.watchPosition(onSuccess,onError,{ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
+       
 
     };
 
@@ -400,7 +393,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             Password:$scope.User.Password,
             DeviceKey:CommonUtils.GetDeviceKey()
         };
-        debugger
+       
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
             var result = reponse.data.Data;

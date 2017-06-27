@@ -55,12 +55,7 @@ MyApp.angular.factory('InitService', ['$document', function ($document) {
 
 
      
-      var token = CommonUtils.GetToken();
-      if (token !== null) {
-          // If already logged in
-          fw7.app.closeModal(".login-screen");
-      } else
-          CommonUtils.showWait(false);
+     
       var today = new Date();
       fw7.app.onPageInit('addOrder', function (page) {
           // Default

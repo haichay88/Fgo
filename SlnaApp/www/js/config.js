@@ -16,6 +16,9 @@ MyApp.fw7 = {
       angular: true,
       material: true,
       pushState: false,
+      swipePanel:"left",
+      swipePanelCloseOpposite:false,
+      swipePanelOnlyClose:false,
   }),
   options : {
     dynamicNavbar: true,
