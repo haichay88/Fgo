@@ -269,28 +269,39 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         }, function (err) { debugger }, options);
 
     };
-   var onSuccess = function(position) {
-    console.log(position);
-        alert('Latitude: '          + position.coords.latitude          + '\n' +
-              'Longitude: '         + position.coords.longitude         + '\n' +
-              'Altitude: '          + position.coords.altitude          + '\n' +
-              'Accuracy: '          + position.coords.accuracy          + '\n' +
-              'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-              'Heading: '           + position.coords.heading           + '\n' +
-              'Speed: '             + position.coords.speed             + '\n' +
-              'Timestamp: '         + position.timestamp                + '\n');
-    };
-
-    // onError Callback receives a PositionError object
-    //
-    function onError(error) {
-       console.log(error);
-        alert('code: '    + error.code    + '\n' +
-              'message: ' + error.message + '\n');
-    }
+   
     $scope.getLocation = function () {
-      
-        navigator.geolocation.watchPosition(onSuccess,onError,{ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
+     
+        cordova.plugins.locationServices.geolocation.getCurrentPosition(function (position) {
+            debugger
+            console.log('getCurrentPosition: ' + position.coords.longitude);
+            $scope.Place={
+             Longitude: position.coords.longitude,   
+             Latitude : position.coords.latitude,
+             Address:undefined
+            };
+            
+            var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude + "," + position.coords.longitude + "&key=AIzaSyDf7hUxmzsiDyklIfcM93ESrtZXmG9Dqq4";
+
+            FgoService.AjaxGet(
+                url,
+                function (pl) {
+                    debugger
+                    $scope.Place.Address = pl.data.results[0].formatted_address;
+                    toastr.success($scope.Place.Address);
+
+                });
+            console.log('$scope.Hotel.Address: ' + $scope.Place.Address);
+
+        }, function (error) {
+            debugger
+            alert('code: ' + error.code + '\n' +
+            'message: ' + error.message + '\n');
+        }, {
+                enableHighAccuracy: true,
+               
+
+        });
        
 
     };
@@ -399,6 +410,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             var result = reponse.data.Data;
             if (!result.IsError) {
                 CommonUtils.SetToken(result.Data.Token);
+                $scope.User=undefined;
                
                 app.mainView.router.loadPage('index.html')
             } else {
@@ -440,6 +452,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             var result = reponse.data.Data;
             if (!result.IsError) {
                 CommonUtils.SetToken(result.Data.Token);
+                $scope.Register=undefined;
                 app.mainView.router.loadPage('index.html')
             } else {
                 CommonUtils.showErrorMessage(result.Message);

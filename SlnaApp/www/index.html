@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#2196f3">
-    <meta name="theme-color" content="#2196f3">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#00bcd4">
+    <meta name="theme-color" content="#00bcd4s">
     <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *">
     <title>Friendgonow.com - connnecting friend</title>
     <!-- Path to Framework7 Library CSS-->
@@ -17,7 +17,7 @@
     <!-- Path to your custom app styles-->
     <link rel="stylesheet" href="css/my-app.css">
 </head>
-<body ng-controller="IndexPageController">
+<body ng-controller="IndexPageController" class="theme-cyan">
     <!-- Status bar overlay for fullscreen mode-->
     <div class="statusbar-overlay"></div>
     <!-- Panels overlay-->
@@ -36,7 +36,7 @@
                         <div class="list-block">
                             <ul>
                                 <li>
-                                    <a href="checkin.html" class="item-link close-panel">
+                                    <a href="index.html" class="item-link close-panel">
                                         <div class="item-content">
                                             <div class="item-media"><i class="icon material-icons">insert_invitation</i></div>
                                             <div class="item-inner">
@@ -56,7 +56,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="list-view.html" class="item-link close-panel">
+                                    <a href="friend.html" class="item-link close-panel">
                                         <div class="item-content">
                                             <div class="item-media"><i class="icon material-icons">person</i></div>
                                             <div class="item-inner">
@@ -66,7 +66,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="media-lists.html" class="item-link close-panel" ng-click="SignOut()">
+                                    <a href="#" class="item-link close-panel" ng-click="SignOut()">
                                         <div class="item-content">
                                             <div class="item-media"><i class="icon material-icons">lock_outline</i></div>
                                             <div class="item-inner">
@@ -103,17 +103,23 @@
                     <div class="navbar">
                         <!-- Navbar inner for Index page-->
                         <div class="navbar-inner">
+                         <div class="left"> <a href="#" class="link icon-only open-panel"> <i class="icon icon-bars"></i></a></div>
                             <!-- We have home navbar without left link-->
                             <div class="center">Fgo - Connecting friend</div>
                             <div class="right">
-                                <!-- Right link contains only icon - additional "icon-only" class--><a href="#" class="link icon-only open-panel"> <i class="icon icon-bars"></i></a>
+                                <!-- Right link contains only icon - additional "icon-only" class-->
+                               
                             </div>
                         </div>
                     </div>
                     <!-- Floating Action Button -->
-                    <a href="addOrder.html" class="floating-button color-pink">
-                        <i class="icon icon-plus"></i>
-                    </a>
+                    <div class="speed-dial">
+                    <a href="#" class="floating-button"><i class="icon icon-plus"></i><i class="icon icon-close"></i></a>
+                        <div class="speed-dial-buttons">                         
+                          <a href="addOrder.html"><i class="icon material-icons">today</i></a>
+                          <a href="addPlace.html"><i class="icon material-icons">place</i></a></div>
+                         </div>
+                   
                     <!-- Scrollable page content-->
                     <div class="page-content" >
                         <div class="list-block media-list" ng-init="GetOrders()">
