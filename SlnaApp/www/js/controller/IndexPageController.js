@@ -45,9 +45,9 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         setupPush();
 
 
-        $scope.Hotel = {
+        $scope.CurrentUser = {
             Name: undefined,
-            Address: undefined,
+            Email: undefined,
             Longitude: 0,
             Latitude: 0,
             Source: 2,
@@ -134,6 +134,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                 }
             },
             formatValue: function (p, values, displayValues) {
+
                 $scope.Invite.LunchDate = values[0] + '/' + values[1] + '/' + values[2] + ' ' + values[3] + ':' + values[4];
                 return values[1] + '/' + values[0] + '/' + values[2] + ' ' + values[3] + ':' + values[4];
             },
@@ -273,8 +274,8 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     $scope.getLocation = function () {
      
         cordova.plugins.locationServices.geolocation.getCurrentPosition(function (position) {
-            debugger
-            console.log('getCurrentPosition: ' + position.coords.longitude);
+           
+          
             $scope.Place={
              Longitude: position.coords.longitude,   
              Latitude : position.coords.latitude,
@@ -286,15 +287,14 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             FgoService.AjaxGet(
                 url,
                 function (pl) {
-                    debugger
-                    $scope.Place.Address = pl.data.results[0].formatted_address;
-                    toastr.success($scope.Place.Address);
+              
+                    $scope.Place.Address = pl.data.results[0].formatted_address;                   
 
                 });
             console.log('$scope.Hotel.Address: ' + $scope.Place.Address);
 
         }, function (error) {
-            debugger
+          
             alert('code: ' + error.code + '\n' +
             'message: ' + error.message + '\n');
         }, {
@@ -411,7 +411,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             if (!result.IsError) {
                 CommonUtils.SetToken(result.Data.Token);
                 $scope.User=undefined;
-               
+               $scope.CurrentUser=result.Data;
                 app.mainView.router.loadPage('index.html')
             } else {
                 toastr.error(result.Message);
@@ -638,23 +638,32 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         var token = CommonUtils.GetToken();
         if (!token)
         { return; }
+    
         var request = {
             Token: token,
             Name: $scope.Place.Name,
             Address: $scope.Place.Address,
-            MenuUrl: $scope.Place.URL
+            MenuUrl: $scope.Place.URL,
+            Longitude:$scope.Place.Longitude,
+            Latitude:$scope.Place.Latitude
         };
+        if(!request.Name){
+        CommonUtils.showErrorMessage("please input your place name !");
+        return;
+    }
         var urlPost = CommonUtils.RootUrl("api/Order/AddOrUpdatePlace");
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
+             CommonUtils.showWait(false);
             var result = reponse.data.Data;
             if (!result.IsError) {
                 $scope.GetPlaces();
+                $scope.Place={};
                 app.mainView.router.back();
             } else {
                 toastr.error(result.Message);
             }
-            CommonUtils.showWait(false);
+           
         });
      
     };

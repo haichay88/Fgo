@@ -25,7 +25,7 @@
 
     <!-- Scrollable page content-->
     <div class="page-content">
-        <div class="card" ng-hide="Order.OrderDetailsCanEdit.length>0">
+        <div class="card" ng-show="Order.OrderDetailsCanEdit.length<=0 && !Order.IsExpired">
             <div class="card-header">Enter what you want:</div>
             <div class="card-content">
                 <div class="card-content-inner">
@@ -67,8 +67,8 @@
             <div class="card-content">
                 <div class="list-block media-list">
                     <ul>
-                        <li ng-hide="EditMode" ng-repeat="item in Order.OrderDetailsReadOnly" ng-show="Order.OrderDetailsReadOnly.length>0">
-                            <a href="orders.html" class="item-link item-content">
+                        <li ng-hide="Order.IsExpired" ng-repeat="item in Order.OrderDetailsReadOnly" >
+                            <a href="orders.html" class="item-link item-content" ng-show="item.IsOwner">
                                 <div class="item-inner">
                                     <div class="item-title-row">
                                         <div class="item-title">{{item.OwnerName}} </div>
@@ -78,6 +78,18 @@
                                     <div class="item-text">{{item.MenuItemSummary}}</div>
                                 </div>
                             </a>
+                        </li>
+                        <li  ng-repeat="item in Order.OrderDetailsReadOnly" ng-show="Order.OrderDetailsReadOnly.length>0 && (Order.IsExpired || !item.IsOwner)">
+                          <div class="item-content">
+                            <div class="item-inner">
+                                    <div class="item-title-row">
+                                        <div class="item-title">{{item.OwnerName}} </div>
+                                        <div class="item-after">{{item.MenuCostTotal|number}}</div>
+                                    </div>
+                                    <div class="item-subtitle"> wanted</div>
+                                    <div class="item-text">{{item.MenuItemSummary}}</div>
+                                </div>
+                                </div>
                         </li>
 
                         <li ng-repeat="item in Order.OrderDetailsNotYet" ng-show="Order.OrderDetailsNotYet">
@@ -97,7 +109,7 @@
             <div class="card-footer">Created by {{Order.OwnerName}} start at {{Order.LunchTimeText}}</div>
         </div>
        
-        <div class="card" >
+        <div class="card" ng-hide="Order.IsExpired">
             <div class="card-header">More friend <a href="searchFriend.html" class="link"> <i class="icon material-icons">person <sup>add</sup></i></a></div>
             <div class="card-content" ng-show="SelectFriends.length>0">
                 <div class="card-content-inner">
