@@ -6,10 +6,10 @@
     <div class="navbar">
         <div class="navbar-inner">
             <div class="left"><a href="index.html" class="back link"><i class="icon icon-back"></i></a></div>
-            <div class="center">{{Order.Title}} - {{Order.LunchDateText}}</div>
+            <div class="center">{{Order.Title}}</div>
             <!--<div class="right">
-               
-                
+
+
             </div>-->
         </div>
     </div>
@@ -22,7 +22,6 @@
             </a>
         </div>
     </div>-->
-
     <!-- Scrollable page content-->
     <div class="page-content">
         <div class="card" ng-show="Order.OrderDetailsCanEdit.length<=0 && !Order.IsExpired">
@@ -53,21 +52,41 @@
                             </li>
                         </ul>
                     </div>
-                    
+
                 </div>
             </div>
             <div class="card-footer">
                 <input type="submit" value="Save" ng-click="AddToMyMenuClient();AddOrderDetail()" class="button button-raised button-fill color-cyan" />
-                
+
+            </div>
+        </div>
+        <div class="content-block-title" ng-hide="!Order.LunchTimeText">Time</div>
+        <div class="card" ng-hide="!Order.LunchTimeText">
+            <div class="card-content">
+                <div class="card-content-inner">{{Order.LunchTimeText}}</div>
             </div>
         </div>
 
+        <div class="content-block-title" ng-hide="!Order.RestaurantName">Location</div>
+        <div class="card" ng-hide="!Order.RestaurantName">
+            <div class="card-content">
+                <div class="card-content-inner">{{Order.RestaurantName}}</div>
+                <div class="card-footer">{{Order.RestaurantAddress}}</div>
+            </div>
+        </div>
+        <div class="content-block-title" ng-hide="!Order.Description">Description</div>
+        <div class="card" ng-hide="!Order.Description">
+            <div class="card-content">
+                <div class="card-content-inner">{{Order.Description}}</div>
+            </div>
+        </div>
+        <div class="content-block-title">Your Friend</div>
         <div class="card">
-           
+
             <div class="card-content">
                 <div class="list-block media-list">
                     <ul>
-                        <li ng-hide="Order.IsExpired" ng-repeat="item in Order.OrderDetailsReadOnly" >
+                        <li ng-hide="Order.IsExpired" ng-repeat="item in Order.OrderDetailsReadOnly">
                             <a href="orders.html" class="item-link item-content" ng-show="item.IsOwner">
                                 <div class="item-inner">
                                     <div class="item-title-row">
@@ -79,9 +98,9 @@
                                 </div>
                             </a>
                         </li>
-                        <li  ng-repeat="item in Order.OrderDetailsReadOnly" ng-show="Order.OrderDetailsReadOnly.length>0 && (Order.IsExpired || !item.IsOwner)">
-                          <div class="item-content">
-                            <div class="item-inner">
+                        <li ng-repeat="item in Order.OrderDetailsReadOnly" ng-show="Order.OrderDetailsReadOnly.length>0 && (Order.IsExpired || !item.IsOwner)">
+                            <div class="item-content">
+                                <div class="item-inner">
                                     <div class="item-title-row">
                                         <div class="item-title">{{item.OwnerName}} </div>
                                         <div class="item-after">{{item.MenuCostTotal|number}}</div>
@@ -89,7 +108,7 @@
                                     <div class="item-subtitle"> wanted</div>
                                     <div class="item-text">{{item.MenuItemSummary}}</div>
                                 </div>
-                                </div>
+                            </div>
                         </li>
 
                         <li ng-repeat="item in Order.OrderDetailsNotYet" ng-show="Order.OrderDetailsNotYet">
@@ -104,11 +123,11 @@
                         </li>
                     </ul>
                 </div>
-              
+
             </div>
-            <div class="card-footer">Created by {{Order.OwnerName}} start at {{Order.LunchTimeText}}</div>
+            <div class="card-footer">Created by {{Order.OwnerName}} <b ng-show="Order.IsExpired">Expired !</b></div>
         </div>
-       
+
         <div class="card" ng-hide="Order.IsExpired">
             <div class="card-header">More friend <a href="searchFriend.html" class="link"> <i class="icon material-icons">person <sup>add</sup></i></a></div>
             <div class="card-content" ng-show="SelectFriends.length>0">
@@ -118,13 +137,13 @@
                     </div>
                 </div>
             </div>
-            <div class="card-footer"  ng-show="SelectFriends.length>0">
-                <input type="submit"  value="Invite" ng-click="InviteMoreClick()" class="button button-raised button-fill color-cyan" />
+            <div class="card-footer" ng-show="SelectFriends.length>0">
+                <input type="submit" value="Invite" ng-click="InviteMoreClick()" class="button button-raised button-fill color-cyan" />
             </div>
-            
+
         </div>
-        
+
     </div>
-    
+
 </div>
 

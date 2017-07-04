@@ -7,7 +7,10 @@ MyApp.angular.service('FgoService', function ($http) {
             method: "get",
             url: Url,
             dataType: 'json',
-        }).then(callback);
+        }).then(callback).catch(function (err) {
+            CommonUtils.showErrorMessage(err.statusText);
+            CommonUtils.showWait(false);
+        });
     };
 
     this.AjaxPost = function (Url, model, callback) {
@@ -70,7 +73,6 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         });
 
         push.on('registration', function (data) {
-            console.log("registration event: " + data.registrationId);
             var oldRegId = localStorage.getItem('registrationId');
             if (oldRegId !== data.registrationId) {
                 // Save new registration ID
@@ -92,6 +94,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     $scope.Contacts = [];
    
     app.onPageInit('searchFriend', function (page) {
+        $scope.getContacts();
         $scope.SelectFriends = [];
     });
     app.onPageInit('InviteDetail', function (page) {
@@ -119,8 +122,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         var calendarDefault = app.calendar({
             input: '#ks-calendar-default',
         });
-        // get contacts
-        $scope.getContacts();
+       
         // Inline date-time
         var pickerInline = app.picker({
             input: '#set-time',
@@ -186,25 +188,20 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             ]
         });
 
-       
-
-        // Dropdown with ajax data
-        var autocompleteDropdownAjax = app.autocomplete({
-            input: '#autocomplete-dropdown-ajax',
-            openIn: 'dropdown',
-            preloader: true, //enable preloader
-            valueProperty: 'id', //object's "value" property name
-            textProperty: 'name', //object's "text" property name
-            limit: 20, //limit to 20 results
-            dropdownPlaceholderText: 'Enter a place',
-            source: function (autocomplete, query, render) {
-                var results = [];
-                if (query.length === 0) {
-                    render(results);
-                    return;
-                }
+        // Simple Standalone
+    var autocompleteStandaloneSimple = app.autocomplete({
+        openIn: 'page', //open in page
+        opener: $('#autocomplete-standalone'), //link that opens autocomplete
+        backOnSelect: true, //go back after we select something
+        source: function (autocomplete, query, render) {
+            var results = [];
+            if (query.length === 0) {
+                render(results);
+                return;
+            }
+           
                 // Show Preloader
-                autocomplete.showPreloader();
+                CommonUtils.showWait(true);
                 // data send
                 var data = {
                     Token: CommonUtils.GetToken(),
@@ -227,16 +224,24 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                             } 
                         }
                         // Hide Preoloader
-                        autocomplete.hidePreloader();
+                       CommonUtils.showWait(false);
                         // Render items by passing array with result items
                         render(results);
                     }
                 });
-            },
-            onChange: function (autocomplete, value) {
-            }
-        });
 
+            // Render items by passing array with result items
+            render(results);
+        },
+        onChange: function (autocomplete, value) {
+            // Add item text value to item-after
+            $('#autocomplete-standalone').find('.item-after').text(value[0]);
+            // Add item value to input value
+            $('#autocomplete-standalone').find('input').val(value[0]);
+        }
+    });
+
+       
         // Pull to refresh content
         var ptrContent = $(page.container).find('.pull-to-refresh-content');
         // Add 'refresh' listener on it
@@ -258,40 +263,59 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         options.filter = "";
         options.multiple = true;
         var filter = ["displayName", "emails"];
+        $scope.Contacts = [];
         navigator.contacts.find(filter, function (onSuccess) {
             var hasEmail = $.grep(onSuccess, function (n, i) {
                 return n.emails && n.displayName;
             });
             $.each(hasEmail, function (i, n) {
-                
-                $scope.Contacts.push({ displayName: n.displayName, email: n.emails[0] });
+
+                $scope.Contacts.push({ FirstName: n.displayName, Email: n.emails[0].value });
             });
-          
-        }, function (err) { debugger }, options);
+            $scope.SyncFriend();
+        }, function (err) {  }, options);
+
+    };
+
+    $scope.SyncFriend = function () {
+        if (!$scope.Contacts) return;
+        var request = {
+            Friends: $scope.Contacts,
+            Token: CommonUtils.GetToken()
+        };
+        var urlPost = CommonUtils.RootUrl("api/Account/SyncFriends");
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
+            var result = reponse.data.Data;
+            CommonUtils.showWait(false);
+            if (!result.IsError) {
+              
+              
+            } else {
+                CommonUtils.showErrorMessage(result.Message);
+            }
+           
+        });
 
     };
    
     $scope.getLocation = function () {
-     
+        CommonUtils.showWait(true);
         cordova.plugins.locationServices.geolocation.getCurrentPosition(function (position) {
-           
-          
             $scope.Place={
              Longitude: position.coords.longitude,   
              Latitude : position.coords.latitude,
              Address:undefined
             };
-            
             var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude + "," + position.coords.longitude + "&key=AIzaSyDf7hUxmzsiDyklIfcM93ESrtZXmG9Dqq4";
 
             FgoService.AjaxGet(
                 url,
                 function (pl) {
               
-                    $scope.Place.Address = pl.data.results[0].formatted_address;                   
-
+                    $scope.Place.Address = pl.data.results[0].formatted_address;
+                    CommonUtils.showWait(false);
                 });
-            console.log('$scope.Hotel.Address: ' + $scope.Place.Address);
 
         }, function (error) {
           
@@ -352,25 +376,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
     };
 
-    $scope.Checkin = function () {
-        if (!$scope.Hotel.Logo) {
-            toastr.error("You must upload an image !");
-            return;
-        }
-        if (!$scope.Hotel.Name) {
-            toastr.error("You must enter hotel name !");
-            return;
-        }
-
-        if (!$scope.Hotel.FirstHour) {
-            toastr.error("You must enter First Hour Price !");
-            return;
-        }
-        var urlPost = "http://api.bizkasa.com/api/Account/AddHotel";
-        HotelService.AjaxPost(urlPost, $scope.Hotel, function (reponse) {
-            toastr.success("insert success !");
-        });
-    };
+   
     $scope.getImage = function () {
         // Retrieve image file location from specified source
         navigator.camera.getPicture(function (imageURI) {
@@ -481,6 +487,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, $scope.Invite, function (reponse) {
             var result = reponse.data.Data;
+            CommonUtils.showWait(false);
             if (!result.IsError) {
                 $scope.GetOrders();
                 app.mainView.router.back();
@@ -488,7 +495,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             } else {
                 toastr.error(result.Message);
             }
-            CommonUtils.showWait(false);
+            
         });
     };
 
@@ -511,13 +518,14 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
             var result = reponse.data.Data;
+            CommonUtils.showWait(false);
             if (!result.IsError) {
                 $scope.GetOrder($scope.currentOrderId);
                 $scope.SelectFriends = [];
             } else {
                 CommonUtils.showErrorMessage(result.Message);
             }
-            CommonUtils.showWait(false);
+            
         });
     };
     $scope.GetOrders = function () {

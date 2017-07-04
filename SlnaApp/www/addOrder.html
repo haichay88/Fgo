@@ -15,7 +15,7 @@
 
     <!-- Scrollable page content-->
     <div class="page-content">
-        <div class="list-block inputs-list">
+        <div class="list-block">
             <ul>
                 <li>
                     <div class="item-content">
@@ -27,16 +27,21 @@
                         </div>
                     </div>
                 </li>
-                <li class="item-content">
-                    <div class="item-inner">
-                        <div class="item-title floating-label">Place</div>
-                        <div class="item-input">
-                            <input type="text" id="autocomplete-dropdown-ajax" />
+               
+
+               <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title floating-label">Description</div>
+                            <div class="item-input">
+                                <textarea class="resizable" ng-model="Invite.Description" placeholder="Description" >
+                                    
+                                </textarea>
+                            </div>
                         </div>
                     </div>
                 </li>
-               
-                <li>
+                 <li>
                     <div class="item-content">
                         <div class="item-inner">
                             <div class="item-title floating-label">Date Time</div>
@@ -46,6 +51,21 @@
                         </div>
                     </div>
                 </li>
+                </ul>
+        </div>
+                <div class="list-block">
+                <ul>
+                  <li>
+                <a href="#" id="autocomplete-standalone" class="item-link item-content autocomplete-opener">
+                    <input type="hidden"/>
+                    <div class="item-inner">
+                      <div class="item-title">Place</div>
+                      <div class="item-after"></div>
+                    </div>
+                </a>
+            </li>
+
+               
                 <li>
                     <a href="searchFriend.html" id="autocomplete-standalone-multiple1" class="item-link item-content autocomplete-opener">
                         <input type="hidden" />
@@ -61,8 +81,10 @@
                         
                     </div>
                 </li>
-            </ul>
-        </div>
+                </ul>
+                </div>
+              
+            
        
     </div>
 </div>

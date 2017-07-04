@@ -17,7 +17,7 @@
     <!-- Path to your custom app styles-->
     <link rel="stylesheet" href="css/my-app.css">
 </head>
-<body ng-controller="IndexPageController" class="theme-cyan">
+<body ng-controller="IndexPageController" class="theme-cyan"  ng-cloak>
     <!-- Status bar overlay for fullscreen mode-->
     <div class="statusbar-overlay"></div>
     <!-- Panels overlay-->
@@ -67,7 +67,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="friend.html" class="item-link close-panel">
+                                    <a href="searchFriend.html" class="item-link close-panel">
                                         <div class="item-content">
                                             <div class="item-media"><i class="icon material-icons">person</i></div>
                                             <div class="item-inner">
@@ -127,8 +127,10 @@
                     <div class="speed-dial">
                     <a href="#" class="floating-button"><i class="icon icon-plus"></i><i class="icon icon-close"></i></a>
                         <div class="speed-dial-buttons">                         
+                          
+                          <a href="addPlace.html"><i class="icon material-icons">place</i></a>
                           <a href="addOrder.html"><i class="icon material-icons">today</i></a>
-                          <a href="addPlace.html"><i class="icon material-icons">place</i></a></div>
+                          </div>
                          </div>
                    
                     <!-- Scrollable page content-->
@@ -142,7 +144,7 @@
                                                 <div class="item-title">{{item.Title}}</div>
                                                 <div class="item-after">{{item.LunchDateText}}</div>
                                             </div>
-                                            <div class="item-subtitle">{{item.RestaurantName}}</div>
+                                            <div class="item-subtitle">{{!item.RestaurantName?item.Description:item.RestaurantName}}</div>
                                             <div class="item-text">{{item.RestaurantAddress}}</div>
                                         </div>
                                     </a>
