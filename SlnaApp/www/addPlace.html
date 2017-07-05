@@ -1,11 +1,11 @@
-﻿<div data-page="category" class="page" ng-cloak>
+﻿<div data-page="addPlace" class="page" ng-cloak>
     <div class="navbar">
         <div class="navbar-inner">
             <div class="left"><a href="#" class="back link"> <i class="icon icon-back"></i><span></span></a></div>
             <div class="center "> New a Place</div>
             <div class="right">
                 <a href="#" class="link" ng-click="getLocation()">
-                    <i class="icon material-icons">place</i>
+                    <i class="icon material-icons">pin_drop</i>
                 </a>
                 <a href="#" class="link" ng-click="AddOrUpdatePlace()"><i class="icon material-icons">check</i></a>
             </div>
@@ -19,7 +19,7 @@
                 <li>
                     <div class="item-content">
                         <div class="item-inner">
-                            <div class="item-title floating-label">Name </div>
+                            <div class="item-title label">Name </div>
                             <div class="item-input">
                                 <input type="text" placeholder="name of place" ng-model="Place.Name" />
                             </div>
@@ -29,7 +29,7 @@
                 <li>
                     <div class="item-content">
                         <div class="item-inner">
-                            <div class="item-title floating-label">URL </div>
+                            <div class="item-title label">URL </div>
                             <div class="item-input">
                                 <input type="text" placeholder="url of place" ng-model="Place.URL" />
                             </div>
@@ -39,7 +39,7 @@
                 <li>
                     <div class="item-content">
                         <div class="item-inner">
-                            <div class="item-title floating-label">Address </div>
+                            <div class="item-title label">Address </div>
                             <div class="item-input">
                                 <input type="text" placeholder="address of place" ng-model="Place.Address" />
                             </div>
@@ -50,6 +50,7 @@
             </ul>
         </div>
       
-
+        
     </div>
+    
 </div>

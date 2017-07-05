@@ -1,0 +1,49 @@
+<div data-page="searchPlace" class="page" ng-cloak>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="left"><a href="#" class="back link"> <i class="icon icon-back"></i><span></span></a></div>
+            <div class="center "> Find location</div>
+            <div class="right">              
+                <a href="addPlace.html" class="link"><i class="icon material-icons">add</i></a>
+            </div>
+        </div>
+    </div>
+    <form data-search-list=".search-here" data-search-in=".item-title" class="searchbar searchbar-init">
+        <div class="searchbar-input">
+            <input type="search" placeholder="Search" /><a href="#" class="searchbar-clear"></a>
+        </div>
+    </form>
+    <!-- Scrollable page content-->
+    <div class="page-content pull-to-refresh-content">
+        <div class="list-block searchbar-not-found">
+            <ul>
+                <li class="item-content">
+                    <div class="item-inner">
+                        <div class="item-title">Nothing found</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="list-block media-list search-here searchbar-found" ng-init="GetPlaces()">
+            <ul>
+                
+                <li ng-repeat="item in Places">
+                    <div class="item-content" ng-click="SelectPlaceClick(item)">
+                        <div class="item-media">
+                            <img src="images/Location512.png" style="width:44px">
+                        </div>
+                        <div class="item-inner">
+                            <div class="item-title-row">
+                                <div class="item-title">{{item.Name}}</div>
+                            </div>
+                            <div class="item-subtitle">{{item.Address}}</div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+
+    </div>
+</div>

@@ -7,7 +7,7 @@
         <div class="navbar-inner">
             <div class="left"><a href="index.html" class="back link icon-only"><i class="icon icon-back"></i></a></div>
             <div class="center">New an invite</div>
-           <div class="right">              
+            <div class="right">
                 <a href="#" class="link" ng-click="InviteClick()"><i class="icon material-icons">check</i></a>
             </div>
         </div>
@@ -27,21 +27,21 @@
                         </div>
                     </div>
                 </li>
-               
 
-               <li>
+
+                <li>
                     <div class="item-content">
                         <div class="item-inner">
                             <div class="item-title floating-label">Description</div>
                             <div class="item-input">
-                                <textarea class="resizable" ng-model="Invite.Description" placeholder="Description" >
+                                <textarea class="resizable" ng-model="Invite.Description" placeholder="Description">
                                     
                                 </textarea>
                             </div>
                         </div>
                     </div>
                 </li>
-                 <li>
+                <li>
                     <div class="item-content">
                         <div class="item-inner">
                             <div class="item-title floating-label">Date Time</div>
@@ -51,21 +51,21 @@
                         </div>
                     </div>
                 </li>
-                </ul>
+            </ul>
         </div>
-                <div class="list-block">
-                <ul>
-                  <li>
-                <a href="#" id="autocomplete-standalone" class="item-link item-content autocomplete-opener">
-                    <input type="hidden"/>
-                    <div class="item-inner">
-                      <div class="item-title">Place</div>
-                      <div class="item-after"></div>
-                    </div>
-                </a>
-            </li>
+        <div class="list-block">
+            <ul>
+                <li>
+                    <a href="searchPlace.html" id="autocomplete-standalone1" class="item-link item-content autocomplete-opener">
+                        <input type="hidden" />
+                        <div class="item-inner">
+                            <div class="item-title">Place</div>
+                            <div class="item-after"></div>
+                        </div>
+                    </a>
+                </li>
 
-               
+
                 <li>
                     <a href="searchFriend.html" id="autocomplete-standalone-multiple1" class="item-link item-content autocomplete-opener">
                         <input type="hidden" />
@@ -78,13 +78,13 @@
                         <div class="chip" ng-repeat="item in SelectFriends" ng-click="RemoveFriendSelected(item)">
                             <div class="chip-label">{{item.FirstName}}</div>
                         </div>
-                        
+
                     </div>
                 </li>
-                </ul>
-                </div>
-              
-            
-       
+            </ul>
+        </div>
+
+
+
     </div>
 </div>

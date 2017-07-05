@@ -102,10 +102,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     });
    
     app.onPageInit('addPlace', function (page) {
-        $scope.Place = {
-            Longitude: undefined,
-            Latitude: undefined
-        };
+        $scope.getLocation();
     });
  
 
@@ -188,59 +185,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             ]
         });
 
-        // Simple Standalone
-    var autocompleteStandaloneSimple = app.autocomplete({
-        openIn: 'page', //open in page
-        opener: $('#autocomplete-standalone'), //link that opens autocomplete
-        backOnSelect: true, //go back after we select something
-        source: function (autocomplete, query, render) {
-            var results = [];
-            if (query.length === 0) {
-                render(results);
-                return;
-            }
-           
-                // Show Preloader
-                CommonUtils.showWait(true);
-                // data send
-                var data = {
-                    Token: CommonUtils.GetToken(),
-                    Keyword: query
-                };
-                // Do Ajax request to Autocomplete data
-                $.ajax({
-                    url: CommonUtils.RootUrl('api/Order/GetPlaces'),
-                    method: 'POST',
-                    dataType: 'json',
-                    //send "query" to server. Useful in case you generate response dynamically
-                    data: data,
-                    success: function (data) {
-                        var result = data.Data.Data;
-                        // Find matched items
-                        for (var i = 0; i < result.length; i++) {
-                            if (result[i].Name.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
-                                $scope.Invite.PlaceId = result[i].Id;
-                                results.push(result[i].Name);
-                            } 
-                        }
-                        // Hide Preoloader
-                       CommonUtils.showWait(false);
-                        // Render items by passing array with result items
-                        render(results);
-                    }
-                });
-
-            // Render items by passing array with result items
-            render(results);
-        },
-        onChange: function (autocomplete, value) {
-            // Add item text value to item-after
-            $('#autocomplete-standalone').find('.item-after').text(value[0]);
-            // Add item value to input value
-            $('#autocomplete-standalone').find('input').val(value[0]);
-        }
-    });
-
+       
        
         // Pull to refresh content
         var ptrContent = $(page.container).find('.pull-to-refresh-content');
@@ -307,14 +252,19 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
              Latitude : position.coords.latitude,
              Address:undefined
             };
-            var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude + "," + position.coords.longitude + "&key=AIzaSyDf7hUxmzsiDyklIfcM93ESrtZXmG9Dqq4";
+            //var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude + "," + position.coords.longitude + "&key=AIzaSyDf7hUxmzsiDyklIfcM93ESrtZXmG9Dqq4&libraries=places";
 
+            var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + position.coords.latitude + "," + position.coords.longitude + "&radius=1000&type=food&key=AIzaSyAyivWr4pvWYIII9OhQ7XbrpFcxtb1H1Qk";
+         
+            
+           
             FgoService.AjaxGet(
                 url,
                 function (pl) {
-              
-                    $scope.Place.Address = pl.data.results[0].formatted_address;
+                    $scope.ResultPlaces = pl.data.results;
+                    debugger
                     CommonUtils.showWait(false);
+                    app.mainView.router.loadPage('resultPlaces.html')
                 });
 
         }, function (error) {
@@ -718,6 +668,23 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                 });
             }
         }
+    };
+
+    $scope.OnResultPlaceClick = function (data) {
+        $scope.Place = {
+            Longitude: data.geometry.location.lng,
+            Latitude: data.geometry.location.lat,
+            Name: data.name,
+            Address: data.vicinity,
+            URL:data.website
+        };
+        app.mainView.router.back();
+    };
+
+    $scope.SelectPlaceClick = function (data) {
+        $('#autocomplete-standalone1').find('.item-after').text(data.Name);
+        $scope.Invite.PlaceId = data.Id;
+        app.mainView.router.back();
     };
 
     $scope.SelectedOK = function () {
