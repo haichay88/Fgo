@@ -1,14 +1,18 @@
 ﻿var root = "http://friendgonow.com/API/";
+var isShow = false;
     var CommonUtils = {
         showWait: function (val) {
-            if (val)
-                //$('#loading').show();
+            if (val) {
+                if (isShow)
+                    return;
+
                 MyApp.fw7.app.showPreloader();
+                isShow = val;
+            }
+                
             else {
-                //setTimeout(function () {
-                //    $('#loading').hide();
-                //}, 1000);
                 MyApp.fw7.app.hidePreloader();
+                isShow = val;
             }
                
         },

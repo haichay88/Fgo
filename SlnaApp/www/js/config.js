@@ -18,7 +18,13 @@ MyApp.fw7 = {
       pushState: false,
       swipePanel:"left",
       swipePanelCloseOpposite:false,
-      swipePanelOnlyClose:false,
+      swipePanelOnlyClose: false,
+      onAjaxStart: function (xhr) {
+          MyApp.fw7.app.showPreloader();
+      },
+      onAjaxComplete: function (xhr) {
+          MyApp.fw7.app.hidePreloader();
+      }
   }),
   options : {
     dynamicNavbar: true,

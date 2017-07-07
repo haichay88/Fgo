@@ -3,11 +3,13 @@
 MyApp.angular.service('FgoService', function ($http) {
 
     this.AjaxGet = function (Url, callback) {
+
         $http({
             method: "get",
             url: Url,
             dataType: 'json',
-        }).then(callback).catch(function (err) {
+        }).then(callback)
+            .catch(function (err) {
             CommonUtils.showErrorMessage(err.statusText);
             CommonUtils.showWait(false);
         });
@@ -102,8 +104,55 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     });
    
     app.onPageInit('addPlace', function (page) {
+        
         $scope.getLocation();
     });
+    app.onPageInit('searchPlace', function (page) {
+        cordova.plugins.locationServices.geolocation.getCurrentPosition(function (position) {
+            var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + position.coords.latitude + "," + position.coords.longitude + "&radius=1000&type=food&key=AIzaSyAyivWr4pvWYIII9OhQ7XbrpFcxtb1H1Qk";
+            $scope.CurrentPosition = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+        }, function (error) {
+
+            alert('code: ' + error.code + '\n' +
+                'message: ' + error.message + '\n');
+        }, {
+                enableHighAccuracy: true,
+
+            });
+
+        $scope.GetPlaces();
+    });
+
+    $scope.getCurrentLocation = function () {
+        cordova.plugins.locationServices.geolocation.getCurrentPosition(function (position) {
+            var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + position.coords.latitude + "," + position.coords.longitude + "&radius=1000&type=food&key=AIzaSyAyivWr4pvWYIII9OhQ7XbrpFcxtb1H1Qk";
+            $scope.CurrentPosition = {
+                lat: position.coords.latitude,
+                log: position.coords.longitude
+            };
+            CommonUtils.showWait(true);
+            FgoService.AjaxGet(
+                url,
+                function (pl) {
+                    CommonUtils.showWait(false);
+                    $scope.ResultPlaces = pl.data.results;
+
+                });
+
+        }, function (error) {
+
+            alert('code: ' + error.code + '\n' +
+                'message: ' + error.message + '\n');
+        }, {
+                enableHighAccuracy: true,
+
+            });
+
+    };
+
  
 
     app.onPageInit('addOrder', function (page) {
@@ -112,7 +161,8 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             Title: undefined,
             LunchDate: undefined,
             Friends: [],
-            Token: undefined
+            Token: undefined,
+            Place:{}
         };
         $scope.SelectFriends = [];
         // Default
@@ -185,21 +235,6 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             ]
         });
 
-       
-       
-        // Pull to refresh content
-        var ptrContent = $(page.container).find('.pull-to-refresh-content');
-        // Add 'refresh' listener on it
-        ptrContent.on('refresh', function (e) {
-            debugger
-            // Emulate 2s loading
-            setTimeout(function () {
-
-                // When loading done, we need to "close" it
-                app.pullToRefreshDone();
-            }, 2000);
-        });
-
     });
     
     
@@ -244,40 +279,42 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
     };
    
-    $scope.getLocation = function () {
+    $scope.getLocation = function (callback) {
         CommonUtils.showWait(true);
         cordova.plugins.locationServices.geolocation.getCurrentPosition(function (position) {
-            $scope.Place={
-             Longitude: position.coords.longitude,   
-             Latitude : position.coords.latitude,
-             Address:undefined
-            };
-            //var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude + "," + position.coords.longitude + "&key=AIzaSyDf7hUxmzsiDyklIfcM93ESrtZXmG9Dqq4&libraries=places";
-
             var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + position.coords.latitude + "," + position.coords.longitude + "&radius=1000&type=food&key=AIzaSyAyivWr4pvWYIII9OhQ7XbrpFcxtb1H1Qk";
-         
-            
-           
+      
             FgoService.AjaxGet(
                 url,
                 function (pl) {
-                    $scope.ResultPlaces = pl.data.results;
-                    debugger
                     CommonUtils.showWait(false);
-                    app.mainView.router.loadPage('resultPlaces.html')
+                    $scope.ResultPlaces = pl.data.results;
+                    app.mainView.router.loadPage('resultPlaces.html');
+                   
                 });
-
+          
         }, function (error) {
           
             alert('code: ' + error.code + '\n' +
             'message: ' + error.message + '\n');
         }, {
-                enableHighAccuracy: true,
-               
+                enableHighAccuracy: true,               
 
         });
        
 
+    };
+
+    $scope.SearchPlaceAPI = function () {
+        if (!$scope.TextSearch) return;
+
+        var url = " https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + $scope.TextSearch + "&location=" + $scope.CurrentPosition.lat + "," + $scope.CurrentPosition.lng + "&radius=50000&key=AIzaSyAyivWr4pvWYIII9OhQ7XbrpFcxtb1H1Qk";
+
+        FgoService.AjaxGet(
+            url,
+            function (pl) {
+                $scope.ResultPlaces = pl.data.results;
+            });
     };
 
     $scope.UploadImage = function () {
@@ -429,6 +466,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         { return; }
         $scope.Invite.Token = token;
         var urlPost = CommonUtils.RootUrl("api/Order/AddInvite");
+        debugger
         $scope.Invite.Friends = $scope.SelectFriends;
         if (!$scope.Invite.Friends) {
             toastr.error("Please choose friends !");
@@ -487,6 +525,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         var urlPost = CommonUtils.RootUrl("api/Order/GetOrders");
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
+            CommonUtils.showWait(false);
             var result = reponse.data.Data;
             if (!result.IsError) {
                 $scope.Orders = result.Data;
@@ -494,7 +533,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                 toastr.error(result.Message);
             }
           
-            CommonUtils.showWait(false);
+          
         });
       
     };
@@ -510,6 +549,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         var urlPost = CommonUtils.RootUrl("api/Order/GetOrder");
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
+            CommonUtils.showWait(false);
             var result = reponse.data.Data;
             if (!result.IsError) {
                 $scope.Order = result.Data
@@ -517,7 +557,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             } else {
                 toastr.error(result.Message);
             }
-            CommonUtils.showWait(false);
+           
         });
 
     };
@@ -546,8 +586,9 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         { return; }
         var request = { Token: token }
         var urlPost = CommonUtils.RootUrl("api/Order/GetPlaces");
-        CommonUtils.showWait(true);
+        //CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
+            //CommonUtils.showWait(false);
             var result = reponse.data.Data;
             if (!result.IsError) {
                 $scope.Places = result.Data;
@@ -555,7 +596,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                 toastr.error(result.Message);
             }
 
-            CommonUtils.showWait(false);
+           
         });
 
     };
@@ -678,6 +719,20 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             Address: data.vicinity,
             URL:data.website
         };
+        app.mainView.router.back();
+    };
+
+    $scope.OnResultSearchPlaceAPIClick = function (data) {
+        $scope.Place = {
+            Longitude: data.geometry.location.lng,
+            Latitude: data.geometry.location.lat,
+            Name: data.name,
+            Address: !data.vicinity ? data.formatted_address : data.vicinity,
+            URL: data.website
+        };
+        $scope.Invite.Place = $scope.Place;
+        $('#autocomplete-standalone1').find('.item-after').text(data.name);
+        $scope.TextSearch = undefined;
         app.mainView.router.back();
     };
 

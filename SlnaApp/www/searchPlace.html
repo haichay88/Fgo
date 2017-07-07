@@ -3,14 +3,17 @@
         <div class="navbar-inner">
             <div class="left"><a href="#" class="back link"> <i class="icon icon-back"></i><span></span></a></div>
             <div class="center "> Find location</div>
-            <div class="right">              
+            <div class="right">   
+                <a href="#" class="link" ng-click="getCurrentLocation()">
+                    <i class="icon material-icons">pin_drop</i>
+                </a>
                 <a href="addPlace.html" class="link"><i class="icon material-icons">add</i></a>
             </div>
         </div>
     </div>
-    <form data-search-list=".search-here" data-search-in=".item-title" class="searchbar searchbar-init">
+    <form   class="searchbar searchbar-init">
         <div class="searchbar-input">
-            <input type="search" placeholder="Search" /><a href="#" class="searchbar-clear"></a>
+            <input type="search" placeholder="Search" ng-change="SearchPlaceAPI()" ng-model="TextSearch"  /> <a href="#" class="searchbar-clear"></a>
         </div>
     </form>
     <!-- Scrollable page content-->
@@ -24,7 +27,7 @@
                 </li>
             </ul>
         </div>
-        <div class="list-block media-list search-here searchbar-found" ng-init="GetPlaces()">
+        <div class="list-block media-list search-here searchbar-found" >
             <ul>
                 
                 <li ng-repeat="item in Places">
@@ -37,6 +40,21 @@
                                 <div class="item-title">{{item.Name}}</div>
                             </div>
                             <div class="item-subtitle">{{item.Address}}</div>
+                        </div>
+                    </div>
+                </li>
+
+                <li ng-repeat="item in ResultPlaces">
+                    <div class="item-content" ng-click="OnResultSearchPlaceAPIClick(item)">
+                        <div class="item-media">
+                            <img src="{{item.icon}}" style="width:44px">
+                        </div>
+                        <div class="item-inner">
+                            <div class="item-title-row">
+                                <div class="item-title">{{item.name}}</div>
+                            </div>
+                            <div class="item-subtitle" ng-hide="!item.vicinity">{{item.vicinity}}</div>
+                            <div class="item-subtitle" ng-show="item.formatted_address">{{item.formatted_address}}</div>
                         </div>
                     </div>
                 </li>
