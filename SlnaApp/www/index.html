@@ -37,7 +37,7 @@
          <div class="content-block">
                 <div class="row ">
                     <div class="col-100" style="text-align:center">
-                        <a href="#" >{{CurrentUser.Email}}</a>
+                        <a href="#" >{{UserContext.Email}}</a>
                     </div>
                     
                 </div>
@@ -109,51 +109,7 @@
         <!-- Your main view, should have "view-main" class-->
         <div class="view view-main" >
             <div class="pages navbar-fixed">
-                <div data-page="index" class="page">
-                    <!-- Top Navbar-->
-                    <div class="navbar">
-                        <!-- Navbar inner for Index page-->
-                        <div class="navbar-inner">
-                         <div class="left"> <a href="#" class="link icon-only open-panel"> <i class="icon icon-bars"></i></a></div>
-                            <!-- We have home navbar without left link-->
-                            <div class="center">Fgo - Connecting friend</div>
-                            <div class="right">
-                                <!-- Right link contains only icon - additional "icon-only" class-->
-                               
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Floating Action Button -->
-                    <div class="speed-dial">
-                    <a href="#" class="floating-button"><i class="icon icon-plus"></i><i class="icon icon-close"></i></a>
-                        <div class="speed-dial-buttons">                         
-                          
-                          <a href="addPlace.html"><i class="icon material-icons">add_location</i></a>
-                          <a href="addOrder.html"><i class="icon material-icons">today</i></a>
-                          </div>
-                         </div>
-                   
-                    <!-- Scrollable page content-->
-                    <div class="page-content" >
-                        <div class="list-block media-list" ng-init="GetOrders()">
-                            <ul>
-                                <li ng-repeat="item in Orders">
-                                    <a href="#" class="item-link item-content" ng-click="GetOrder(item.Id)">
-                                        <div class="item-inner">
-                                            <div class="item-title-row">
-                                                <div class="item-title">{{item.Title}}</div>
-                                                <div class="item-after">{{item.LunchDateText}}</div>
-                                            </div>
-                                            <div class="item-subtitle">{{!item.RestaurantName?item.Description:item.RestaurantName}}</div>
-                                            <div class="item-text">{{item.RestaurantAddress}}</div>
-                                        </div>
-                                    </a>
-                                </li>                              
-                            </ul>
-                        </div>
-
-                    </div>
-                </div>
+                
             </div>
            
           

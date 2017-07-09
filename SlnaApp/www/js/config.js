@@ -17,7 +17,7 @@ MyApp.fw7 = {
       material: true,
       pushState: false,
       swipePanel:"left",
-      swipePanelCloseOpposite:false,
+      swipePanelCloseOpposite: false,
       swipePanelOnlyClose: false,
       onAjaxStart: function (xhr) {
           MyApp.fw7.app.showPreloader();

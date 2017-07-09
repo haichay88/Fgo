@@ -50,14 +50,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         setupPush();
 
 
-        $scope.CurrentUser = {
-            Name: undefined,
-            Email: undefined,
-            Longitude: 0,
-            Latitude: 0,
-            Source: 2,
-            Logo:undefined
-        };
+        $scope.UserContext = CommonUtils.GetToken();
 
     });
 
@@ -83,7 +76,20 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             }
         });
 
-        push.on('notification', function(data) {
+        push.on('notification', function (data) {
+            $scope.currentOrderId = data.additionalData.id;
+            if (data.additionalData.foreground) {
+                navigator.notification.confirm(
+                    data.title,
+                    function (buttonIndex) {
+                        if (buttonIndex === 1) {
+                            $scope.GetOrder(data.additionalData.id);
+                        }
+                    },
+                    'More Detail',
+                    ['Yes', 'No']
+                );
+            } 
          console.log(data);
          
      });
@@ -92,9 +98,61 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             console.log("push error = " + e.message);
         });
     }
+    function MoreDetail() {
+        $scope.GetOrder($scope.currentOrderId);
+    }
     var today = new Date();
     $scope.Contacts = [];
-   
+    app.onPageInit('invites', function (page) {
+        debugger
+        $scope.SearchOrder = {
+            Take:5,
+            Skip: 0,
+            Token: $scope.UserContext.Token
+        };
+        console.log($scope.SearchOrder);
+        $scope.GetOrders();
+        var loading = false;
+        // Last loaded index, we need to pass it to script
+        var lastLoadedIndex = $('.infinite-scroll .list-block li').length;
+        // Attach 'infinite' event handler
+        $('.infinite-scroll').on('infinite', function () {
+            debugger
+            // Exit, if loading in progress
+            if (loading) return;
+            // Set loading trigger
+            loading = true;
+            // Request some file with data
+            var urlPost = CommonUtils.RootUrl("api/Order/GetOrders");
+            $scope.SearchOrder.Skip = lastLoadedIndex + 1
+            FgoService.AjaxPost(urlPost, $scope.SearchOrder, function (reponse) {
+                loading = false;
+                var result = reponse.data.Data;
+                if (!result.IsError) {
+                    var data = result.Data;
+                    if (data === '') {
+                        // Nothing more to load, detach infinite scroll events to prevent unnecessary loadings
+                        app.detachInfiniteScroll($('.infinite-scroll'));
+                    }
+                    else {
+                        debugger
+                        // Append loaded elements to list block
+                        $scope.Orders=  $.merge($scope.Orders,data);
+                        //$('.infinite-scroll .list-block ul').append(data);
+                        // Update last loaded index
+                        lastLoadedIndex = $('.infinite-scroll .list-block li').length;
+                    }
+                } else {
+                    toastr.error(result.Message);
+                }
+               
+
+            });
+
+           
+        });
+      
+    });
     app.onPageInit('searchFriend', function (page) {
         $scope.getContacts();
         $scope.SelectFriends = [];
@@ -261,7 +319,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         if (!$scope.Contacts) return;
         var request = {
             Friends: $scope.Contacts,
-            Token: CommonUtils.GetToken()
+            Token: $scope.UserContext.Token
         };
         var urlPost = CommonUtils.RootUrl("api/Account/SyncFriends");
         CommonUtils.showWait(true);
@@ -402,10 +460,11 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         FgoService.AjaxPost(urlPost, request, function (reponse) {
             var result = reponse.data.Data;
             if (!result.IsError) {
-                CommonUtils.SetToken(result.Data.Token);
+                CommonUtils.SetToken(JSON.stringify(result.Data));
                 $scope.User=undefined;
-               $scope.CurrentUser=result.Data;
-                app.mainView.router.loadPage('index.html')
+                $scope.CurrentUser = result.Data;
+
+                app.mainView.router.loadPage('invites.html')
             } else {
                 toastr.error(result.Message);
             }
@@ -461,12 +520,11 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             return;
         }
 
-        var token = CommonUtils.GetToken();
-        if (!token)
+       
+        if (!$scope.UserContext)
         { return; }
-        $scope.Invite.Token = token;
+        $scope.Invite.Token = $scope.UserContext.Token;
         var urlPost = CommonUtils.RootUrl("api/Order/AddInvite");
-        debugger
         $scope.Invite.Friends = $scope.SelectFriends;
         if (!$scope.Invite.Friends) {
             toastr.error("Please choose friends !");
@@ -489,8 +547,8 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
     $scope.InviteMoreClick = function () {
        
-        var token = CommonUtils.GetToken();
-        if (!token)
+       
+        if (!$scope.UserContext)
         { return; }
         var urlPost = CommonUtils.RootUrl("api/Order/AddMoreFriend");
         if (!$scope.SelectFriends) {
@@ -499,7 +557,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         }
         
         var request = {
-            Token: token,
+            Token: $scope.UserContext.Token,
             Friends: $scope.SelectFriends,
             OrderId: $scope.currentOrderId
         };
@@ -518,14 +576,14 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     };
     $scope.GetOrders = function () {
         
-        var token = CommonUtils.GetToken();
-        if (!token)
+       
+        if (!$scope.UserContext)
         { return; }
-        var request = { Token: token }
+      
         var urlPost = CommonUtils.RootUrl("api/Order/GetOrders");
-        CommonUtils.showWait(true);
-        FgoService.AjaxPost(urlPost, request, function (reponse) {
-            CommonUtils.showWait(false);
+       
+        FgoService.AjaxPost(urlPost, $scope.SearchOrder, function (reponse) {
+          
             var result = reponse.data.Data;
             if (!result.IsError) {
                 $scope.Orders = result.Data;
@@ -542,10 +600,10 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
         $scope.currentOrderId = val;
 
-        var token = CommonUtils.GetToken();
-        if (!token)
+      
+        if (!$scope.UserContext)
         { return; }
-        var request = { Token: token, Id: $scope.currentOrderId };
+        var request = { Token: $scope.UserContext.Token, Id: $scope.currentOrderId };
         var urlPost = CommonUtils.RootUrl("api/Order/GetOrder");
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
@@ -564,7 +622,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     $scope.AddOrderDetail = function () {
         
         $scope.Order.OrderDetails = $scope.Order.OrderDetailsCanEdit;
-        $scope.Order.Token = CommonUtils.GetToken();
+        $scope.Order.Token = $scope.UserContext.Token;
         var urlPost = CommonUtils.RootUrl("api/Order/AddOrderDetail");
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, $scope.Order, function (reponse) {
@@ -581,10 +639,10 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
     $scope.GetPlaces = function () {
 
-        var token = CommonUtils.GetToken();
-        if (!token)
+        
+        if (!$scope.UserContext)
         { return; }
-        var request = { Token: token }
+        var request = { Token: $scope.UserContext.Token }
         var urlPost = CommonUtils.RootUrl("api/Order/GetPlaces");
         //CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
@@ -602,10 +660,10 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     };
     $scope.GetFriends = function () {
 
-        var token = CommonUtils.GetToken();
-        if (!token)
+       
+        if (!$scope.UserContext)
         { return; }
-        var request = { Token: token }
+        var request = { Token: $scope.UserContext.Token }
         var urlPost = CommonUtils.RootUrl("api/Account/GetFriends");
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
@@ -634,12 +692,12 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     $scope.AddOrUpdatePlace = function () {
         
         //MyApp.fw7.app
-        var token = CommonUtils.GetToken();
-        if (!token)
+     
+        if (!$scope.UserContext)
         { return; }
     
         var request = {
-            Token: token,
+            Token: $scope.UserContext.Token,
             Name: $scope.Place.Name,
             Address: $scope.Place.Address,
             MenuUrl: $scope.Place.URL,
@@ -670,11 +728,11 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     $scope.AddOrUpdateFriend = function () {
 
         //MyApp.fw7.app
-        var token = CommonUtils.GetToken();
-        if (!token)
+       
+        if (!$scope.UserContext)
         { return; }
         var request = {
-            Token: token,
+            Token: $scope.UserContext.Token,
             FirstName: $scope.Friend.FirstName,
             Email: $scope.Friend.Email,
           

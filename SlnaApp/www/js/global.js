@@ -21,7 +21,7 @@ var isShow = false;
         },
         GetToken: function () {
             var context = localStorage.getItem('token');
-            return context;
+            return JSON.parse(context);
         },
         GetDeviceKey: function () {
             return localStorage.getItem('registrationId');

@@ -23,10 +23,6 @@ MyApp.angular.factory('InitService', ['$document', function ($document) {
       eventListeners.ready[i]();
     }
 
-    
-   
-
-
     var token = CommonUtils.GetToken();
     if (token == null) {
         // If logined not yet
@@ -35,10 +31,11 @@ MyApp.angular.factory('InitService', ['$document', function ($document) {
         //fw7.app.router.load({
         //    url: 'login.html'
         //});
-    } else
-        CommonUtils.showWait(false);
-    
-    
+    } else {
+        fw7.app.mainView.router.load(
+            { url: 'invites.html', ignoreCache: true, reload: true});
+       
+    }
     
   }
 

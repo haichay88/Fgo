@@ -1,0 +1,58 @@
+<div data-page="invites" class="page">
+	<!-- Top Navbar-->
+	<div class="navbar">
+		<!-- Navbar inner for Index page-->
+		<div class="navbar-inner">
+			<div class="left"> <a href="#" class="link icon-only open-panel"> <i class="icon icon-bars"></i></a></div>
+			<!-- We have home navbar without left link-->
+			<div class="center">Fgo - Connecting friend</div>
+			<div class="right">
+				<!-- Right link contains only icon - additional "icon-only" class-->
+
+			</div>
+		</div>
+	</div>
+	<!-- Floating Action Button -->
+	<div class="speed-dial">
+		<a href="#" class="floating-button"><i class="icon icon-plus"></i><i class="icon icon-close"></i></a>
+		<div class="speed-dial-buttons">
+
+			<a href="addPlace.html"><i class="icon material-icons">add_location</i></a>
+			<a href="addOrder.html"><i class="icon material-icons">today</i></a>
+		</div>
+	</div>
+	<form data-search-list=".search-here" data-search-in=".item-title" class="searchbar searchbar-init">
+		<div class="searchbar-input">
+			<input type="search" placeholder="Search" /><a href="#" class="searchbar-clear"></a>
+		</div>
+	</form>
+	<!-- Scrollable page content-->
+	<div class="page-content infinite-scroll" data-distance="5">
+		<div class="list-block searchbar-not-found">
+			<ul>
+				<li class="item-content">
+					<div class="item-inner">
+						<div class="item-title">Nothing found</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="list-block media-list search-here searchbar-found">
+			<ul>
+				<li ng-repeat="item in Orders">
+					<a href="#" class="item-link item-content" ng-click="GetOrder(item.Id)">
+						<div class="item-inner">
+							<div class="item-title-row">
+								<div class="item-title">{{item.Title}}</div>
+								<div class="item-after">{{item.LunchDateText}}</div>
+							</div>
+							<div class="item-subtitle">{{!item.RestaurantName?item.Description:item.RestaurantName}}</div>
+							<div class="item-text">{{item.RestaurantAddress}}</div>
+						</div>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+	</div>
+</div>
