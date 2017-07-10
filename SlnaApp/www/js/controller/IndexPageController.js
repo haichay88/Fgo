@@ -30,7 +30,7 @@ MyApp.angular.service('FgoService', function ($http) {
     };
 
 });
-MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService', 'FgoService', function ($scope, $http, InitService, FgoService) {
+MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService', 'FgoService', 'signalR', function ($scope, $http, InitService, FgoService, signalR) {
     'use strict';
     var app = MyApp.fw7.app;
     var destinationType = null;
@@ -46,7 +46,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         // And you can access Framework7 like this:
         // MyApp.fw7.app
         
-
+        signalR.startHub();  
         setupPush();
 
 
@@ -104,7 +104,6 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     var today = new Date();
     $scope.Contacts = [];
     app.onPageInit('invites', function (page) {
-        debugger
         $scope.SearchOrder = {
             Take:5,
             Skip: 0,
@@ -294,7 +293,20 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         });
 
     });
-    
+    $scope.SendMessage = function () {
+        var request = {
+            Email: $scope.message
+        };
+        debugger
+        var urlPost = CommonUtils.RootUrl("api/Message/Send");
+        CommonUtils.showWait(true);
+        FgoService.AjaxPost(urlPost, request, function (reponse) {
+            debugger
+            var result = reponse.data.Data;
+            signalR.sayhello = navigator.notification.alert("ok");
+
+        });
+    };
     
     $scope.getContacts = function () {
         var options = new ContactFindOptions();
