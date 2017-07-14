@@ -90,6 +90,11 @@ MyApp.angular.factory("signalR", function ($rootScope) {
                 $hub.server.login(username);
             });
         },
+        SendMessage: function (username) {
+            connection.done(function () {
+                $hub.server.sendMessage(username);
+            });
+        },
         SendPrivateMessage: function (touser, message, name) {
             connection.done(function () {
                 $hub.server.sendPrivateMessage(touser, message, name);
@@ -109,8 +114,9 @@ MyApp.angular.factory("signalR", function ($rootScope) {
         joinroom: function (callback) {
             $hub.client.joinroom = callback;
         },
-        sayhello: function (callback) {
-            $hub.client.sayhello = callback;
+        SendComplete: function (callback) {
+            debugger
+            $hub.client.sendComplete = callback;
         },
         UserEntered: function (callback) {
             $hub.client.userEntered = callback;

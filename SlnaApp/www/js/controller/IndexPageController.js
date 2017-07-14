@@ -156,6 +156,13 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         $scope.getContacts();
         $scope.SelectFriends = [];
     });
+
+    app.onPageInit('messages', function (page) {
+        $scope.GetMessageChat();
+      
+    });
+
+    
     app.onPageInit('InviteDetail', function (page) {
         $scope.SelectFriends = [];
     });
@@ -294,20 +301,43 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
     });
     $scope.SendMessage = function () {
+        if (!$scope.message) return;
+        CommonUtils.showWait(true);
         var request = {
-            Email: $scope.message
+            Message: $scope.message,
+            Token: $scope.UserContext.Token,
+            InviteId: $scope.currentOrderId
         };
-        debugger
-        var urlPost = CommonUtils.RootUrl("api/Message/Send");
+        signalR.SendMessage(request);
+        $scope.message = undefined;
+    };
+    signalR.SendComplete(function (res) {
+        CommonUtils.showWait(false);
+        $scope.Messages.push(res.Data);
+    });
+
+    $scope.GetMessageChat = function () {
+      
+        var request = {
+            InviteId: $scope.currentOrderId,
+            Token: $scope.UserContext.Token
+        };
+        var urlPost = CommonUtils.RootUrl("api/Message/GetMessageChat");
         CommonUtils.showWait(true);
         FgoService.AjaxPost(urlPost, request, function (reponse) {
-            debugger
             var result = reponse.data.Data;
-            signalR.sayhello = navigator.notification.alert("ok");
+            CommonUtils.showWait(false);
+            if (!result.IsError) {
+                $scope.Messages = result
+
+            } else {
+                CommonUtils.showErrorMessage(result.Message);
+            }
 
         });
+
     };
-    
+
     $scope.getContacts = function () {
         var options = new ContactFindOptions();
         options.filter = "";
@@ -474,7 +504,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             if (!result.IsError) {
                 CommonUtils.SetToken(JSON.stringify(result.Data));
                 $scope.User=undefined;
-                $scope.CurrentUser = result.Data;
+                $scope.UserContext = CommonUtils.GetToken();
 
                 app.mainView.router.loadPage('invites.html')
             } else {
