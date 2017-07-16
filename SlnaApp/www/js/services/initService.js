@@ -80,7 +80,6 @@ MyApp.angular.factory("signalR", function ($rootScope) {
     var connection = null;
     var signalR = {
         startHub: function () {
-            console.log("started");
             connection = $.connection.hub.start();
         },
         //////////////////// SERVER METHODS/////////////////
@@ -88,6 +87,11 @@ MyApp.angular.factory("signalR", function ($rootScope) {
         JoinGroup: function (groupName) {
             connection.done(function () {
                 $hub.server.joinGroup(groupName);
+            });
+        },
+        Login: function (request) {
+            connection.done(function () {
+                $hub.server.login(request);
             });
         },
         SendMessage: function (username) {
@@ -115,7 +119,6 @@ MyApp.angular.factory("signalR", function ($rootScope) {
             $hub.client.joinroom = callback;
         },
         SendComplete: function (callback) {
-            debugger
             $hub.client.sendComplete = callback;
         },
         UserEntered: function (callback) {

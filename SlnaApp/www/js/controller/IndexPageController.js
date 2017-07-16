@@ -52,7 +52,8 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
 
         $scope.UserContext = CommonUtils.GetToken();
-
+        var request = { Token: $scope.UserContext.Token };
+        signalR.Login(request);
     });
 
     function setupPush() {
@@ -156,11 +157,67 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         $scope.getContacts();
         $scope.SelectFriends = [];
     });
+    function MarkUnRead(val) {
+        var cuMsgs = CommonUtils.GetValue('message');
+        var WasStore = false;
+        if (cuMsgs) {
+            $.each(cuMsgs, function (i, n) {
+                if (n.InviteId == val) {
+                    n.Count = n.Count + 1;
+                    WasStore = true;
+                }
+            });
+            if (!WasStore) {
+                cuMsgs.push({
+                    InviteId: val,
+                    Count: 1
+                });
+
+            }
+            CommonUtils.SetValue('message', JSON.stringify(cuMsgs));
+        } else {
+            var msg = [];
+            msg.push({
+                InviteId: val,
+                Count: 1
+            });
+            CommonUtils.SetValue('message', JSON.stringify(msg));
+        }
+    }
+    function MarkRead(val) {
+        debugger
+        var cuMsgs = CommonUtils.GetValue('message');
+        if (cuMsgs) {
+            cuMsgs = $.grep(cuMsgs, function (n,i ) {
+                return n.InviteId != val;
+            });
+            CommonUtils.SetValue('message', JSON.stringify(cuMsgs));
+        }
+        SetUnRead();
+    }
+    function SetUnRead() {
+        var msg = CommonUtils.GetValue('message');
+        if ($scope.Orders && msg) {
+
+            $.each($scope.Orders, function (i, n) {
+                var unread = $.grep(msg, function (m, x) {
+                    return m.InviteId == n.Id;
+                });
+                debugger
+                if (unread.length > 0) {
+                    n.UnReadMessage = unread[0].Count;
+                } else {
+                    n.UnReadMessage = 0;
+                }
+            });
+            $scope.$evalAsync();
+        }
+    }
     var IsHasLeft = true;
     app.onPageInit('messages', function (page) {
         IsHasLeft = false;
-        signalR.JoinGroup($scope.currentOrderId);
-     
+        var isFocused = false;
+      
         // Initialize Messages
         var myMessages = app.messages('.messages', {
             autoLayout: true
@@ -196,7 +253,8 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
         });
 
-         $scope.GetMessageChat();
+        $scope.GetMessageChat();
+        MarkRead($scope.currentOrderId);
     });
 
     app.onPageBack('messages', function (page) {
@@ -229,34 +287,6 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         }
       
     });
-    function MarkUnRead(val) {
-        debugger
-        var cuMsgs = CommonUtils.GetValue('message');
-        var WasStore = false;
-
-        if (cuMsgs) {
-            $.each(cuMsgs, function (i, n) {
-                if (n.InviteId == val) {
-                    n.Count++;
-                    WasStore = true;
-                }
-            });
-            if (!WasStore) {
-                cuMsgs.push({
-                    InviteId: val,
-                    Count: 1
-                });
-                CommonUtils.SetValue('message', JSON.stringify(cuMsgs));
-            }
-        } else {
-            var msg = [];
-            msg.push({
-                InviteId: val,
-                Count: 1
-            });
-            CommonUtils.SetValue('message', JSON.stringify(msg));
-        }
-    }
     
     app.onPageInit('InviteDetail', function (page) {
         $scope.SelectFriends = [];
@@ -699,22 +729,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             
         });
     };
-    function SetUnRead() {
-        debugger
-        var msg = CommonUtils.GetValue('messages');
-        if ($scope.Orders && msg) {
-
-            $.each($scope.Orders, function (i, n) {
-                debugger
-                var unread = $.grep(msg, function (x, m) {
-                    return m.InviteId == n.Id;
-                });
-                if (unread.length > 0) {
-                    n.UnReadMessage = unread[0].Count;
-                }
-            });
-        }
-    }
+    
 
     $scope.GetOrders = function () {
         
@@ -729,7 +744,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             var result = reponse.data.Data;
             if (!result.IsError) {
                 $scope.Orders = result.Data;
-                debugger
+                SetUnRead();
                
             } else {
                 toastr.error(result.Message);
