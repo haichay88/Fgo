@@ -10,6 +10,7 @@
         "cordova-plugin-dialogs": "^1.3.3",
         "cordova-plugin-locationservices": "^2.1.0",
         "cordova-plugin-splashscreen": "~4.0.3",
+        "cordova-plugin-vibration": "^2.1.5",
         "cordova-plugin-whitelist": "~1.3.2",
         "cordova-windows": "4.4.2",
         "geolocation": "file:node_modules\\Geolocation",
@@ -39,7 +40,8 @@
                 "SENDER_ID": "85075801930"
             },
             "cordova-plugin-locationservices": {},
-            "cordova-plugin-dialogs": {}
+            "cordova-plugin-dialogs": {},
+            "cordova-plugin-vibration": {}
         }
     }
 }

@@ -85,9 +85,9 @@ MyApp.angular.factory("signalR", function ($rootScope) {
         },
         //////////////////// SERVER METHODS/////////////////
        
-        Login: function (username) {
+        JoinGroup: function (groupName) {
             connection.done(function () {
-                $hub.server.login(username);
+                $hub.server.joinGroup(groupName);
             });
         },
         SendMessage: function (username) {

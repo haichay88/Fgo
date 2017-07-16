@@ -37,6 +37,13 @@ var isShow = false;
                 message: msg,
                 hold:1500
             });
+        },
+        SetValue: function (key,val) {
+            localStorage.setItem(key, val);
+        },
+        GetValue: function (key) {
+            var result = localStorage.getItem(key);
+            return JSON.parse(result);
         }
        
     };

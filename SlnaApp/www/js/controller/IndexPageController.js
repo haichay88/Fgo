@@ -38,15 +38,16 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     InitService.addEventListener('ready', function () {
         // DOM ready
         console.log('IndexPageController: ok, DOM ready');
-       // destinationType = navigator.camera.DestinationType;
-       // pictureSource = navigator.camera.PictureSourceType;
+        // destinationType = navigator.camera.DestinationType;
+        // pictureSource = navigator.camera.PictureSourceType;
         // You can access angular like this:
         // MyApp.angular
 
         // And you can access Framework7 like this:
         // MyApp.fw7.app
-        
-        signalR.startHub();  
+
+        signalR.startHub();
+       
         setupPush();
 
 
@@ -89,10 +90,10 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                     'More Detail',
                     ['Yes', 'No']
                 );
-            } 
-         console.log(data);
-         
-     });
+            }
+            console.log(data);
+
+        });
 
         push.on('error', function (e) {
             console.log("push error = " + e.message);
@@ -105,18 +106,17 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
     $scope.Contacts = [];
     app.onPageInit('invites', function (page) {
         $scope.SearchOrder = {
-            Take:5,
+            Take: 5,
             Skip: 0,
             Token: $scope.UserContext.Token
         };
-        console.log($scope.SearchOrder);
+
         $scope.GetOrders();
         var loading = false;
         // Last loaded index, we need to pass it to script
         var lastLoadedIndex = $('.infinite-scroll .list-block li').length;
         // Attach 'infinite' event handler
         $('.infinite-scroll').on('infinite', function () {
-            debugger
             // Exit, if loading in progress
             if (loading) return;
             // Set loading trigger
@@ -136,7 +136,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                     else {
                         debugger
                         // Append loaded elements to list block
-                        $scope.Orders=  $.merge($scope.Orders,data);
+                        $scope.Orders = $.merge($scope.Orders, data);
                         //$('.infinite-scroll .list-block ul').append(data);
                         // Update last loaded index
                         lastLoadedIndex = $('.infinite-scroll .list-block li').length;
@@ -144,24 +144,119 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                 } else {
                     toastr.error(result.Message);
                 }
-               
+
 
             });
 
-           
+
         });
-      
+
     });
     app.onPageInit('searchFriend', function (page) {
         $scope.getContacts();
         $scope.SelectFriends = [];
     });
-
+    var IsHasLeft = true;
     app.onPageInit('messages', function (page) {
-        $scope.GetMessageChat();
-      
+        IsHasLeft = false;
+        signalR.JoinGroup($scope.currentOrderId);
+     
+        // Initialize Messages
+        var myMessages = app.messages('.messages', {
+            autoLayout: true
+        });
+
+        // Initialize Messagebar
+        var myMessagebar = app.messagebar('.messagebar');
+
+     
+        $('.messagebar .link').on('click', function (e) {
+            // Keep focused messagebar's textarea if it was in focus before
+            if (isFocused) {
+                e.preventDefault();
+                myMessagebar.textarea[0].focus();
+            }
+            var messageText = myMessagebar.value();
+            if (messageText.length === 0) {
+                return;
+            }
+            // Clear messagebar
+            myMessagebar.clear();
+
+            // Add Message
+            
+            CommonUtils.showWait(true);
+            var request = {
+                Message: messageText,
+                Token: $scope.UserContext.Token,
+                InviteId: $scope.currentOrderId
+            };
+            signalR.SendMessage(request);           
+
+
+        });
+
+         $scope.GetMessageChat();
     });
 
+    app.onPageBack('messages', function (page) {
+        IsHasLeft = true;
+    });
+
+    signalR.SendComplete(function (res) {
+        var result = res.Data;
+        if (IsHasLeft) {
+            navigator.vibrate(1000);
+            MarkUnRead(result.InviteId);
+            SetUnRead();
+            return;
+        } 
+        var myMessages = $('.messages')[0].f7Messages;
+        CommonUtils.showWait(false);
+       
+        if (result.AccountId == $scope.UserContext.Id)
+            result.type = "sent";
+        else
+            result.type = "received";
+        if (result.InviteId == $scope.currentOrderId) {
+            myMessages.appendMessage(result);
+            myMessages.scrollMessages();
+        }
+        else {
+            MarkUnRead(result.InviteId);
+            SetUnRead();
+            navigator.vibrate(1000);
+        }
+      
+    });
+    function MarkUnRead(val) {
+        debugger
+        var cuMsgs = CommonUtils.GetValue('message');
+        var WasStore = false;
+
+        if (cuMsgs) {
+            $.each(cuMsgs, function (i, n) {
+                if (n.InviteId == val) {
+                    n.Count++;
+                    WasStore = true;
+                }
+            });
+            if (!WasStore) {
+                cuMsgs.push({
+                    InviteId: val,
+                    Count: 1
+                });
+                CommonUtils.SetValue('message', JSON.stringify(cuMsgs));
+            }
+        } else {
+            var msg = [];
+            msg.push({
+                InviteId: val,
+                Count: 1
+            });
+            CommonUtils.SetValue('message', JSON.stringify(msg));
+        }
+    }
     
     app.onPageInit('InviteDetail', function (page) {
         $scope.SelectFriends = [];
@@ -300,21 +395,7 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         });
 
     });
-    $scope.SendMessage = function () {
-        if (!$scope.message) return;
-        CommonUtils.showWait(true);
-        var request = {
-            Message: $scope.message,
-            Token: $scope.UserContext.Token,
-            InviteId: $scope.currentOrderId
-        };
-        signalR.SendMessage(request);
-        $scope.message = undefined;
-    };
-    signalR.SendComplete(function (res) {
-        CommonUtils.showWait(false);
-        $scope.Messages.push(res.Data);
-    });
+   
 
     $scope.GetMessageChat = function () {
       
@@ -323,12 +404,14 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             Token: $scope.UserContext.Token
         };
         var urlPost = CommonUtils.RootUrl("api/Message/GetMessageChat");
-        CommonUtils.showWait(true);
+      
         FgoService.AjaxPost(urlPost, request, function (reponse) {
             var result = reponse.data.Data;
-            CommonUtils.showWait(false);
+          
             if (!result.IsError) {
-                $scope.Messages = result
+                var myMessages = $('.messages')[0].f7Messages;
+                myMessages.addMessages(result);
+                myMessages.layout();
 
             } else {
                 CommonUtils.showErrorMessage(result.Message);
@@ -616,6 +699,23 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             
         });
     };
+    function SetUnRead() {
+        debugger
+        var msg = CommonUtils.GetValue('messages');
+        if ($scope.Orders && msg) {
+
+            $.each($scope.Orders, function (i, n) {
+                debugger
+                var unread = $.grep(msg, function (x, m) {
+                    return m.InviteId == n.Id;
+                });
+                if (unread.length > 0) {
+                    n.UnReadMessage = unread[0].Count;
+                }
+            });
+        }
+    }
+
     $scope.GetOrders = function () {
         
        
@@ -629,6 +729,8 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
             var result = reponse.data.Data;
             if (!result.IsError) {
                 $scope.Orders = result.Data;
+                debugger
+               
             } else {
                 toastr.error(result.Message);
             }
