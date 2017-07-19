@@ -1,9 +1,14 @@
 /*jslint browser: true*/
 /*global console, MyApp*/
+var isOffline = false;
 MyApp.angular.service('FgoService', function ($http) {
 
     this.AjaxGet = function (Url, callback) {
-
+        if (isOffline) {
+            CommonUtils.showWait(false);
+            CommonUtils.showErrorMessage("Network not available !");
+            return;
+        }
         $http({
             method: "get",
             url: Url,
@@ -16,6 +21,11 @@ MyApp.angular.service('FgoService', function ($http) {
     };
 
     this.AjaxPost = function (Url, model, callback) {
+        if (isOffline) {
+            CommonUtils.showWait(false);
+            CommonUtils.showErrorMessage("Network not available !");
+            return;
+        }
         $http({
             method: "POST",
             url: Url,
@@ -45,17 +55,61 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
 
         // And you can access Framework7 like this:
         // MyApp.fw7.app
-
-        signalR.startHub();
-       
-        setupPush();
-
-
+      
         $scope.UserContext = CommonUtils.GetToken();
         var request = { Token: $scope.UserContext.Token };
-        signalR.Login(request);
-    });
 
+        checkNetwork();
+        if (!isOffline) {
+            signalR.startHub();
+            setupPush();
+            signalR.Login(request);
+           
+          
+
+        } else {
+            navigator.notification.alert(
+                'Network not available !',  // message
+                exitApp,         // callback
+                'Network Error',            // title
+                'OK'                  // buttonName
+            );
+            return;
+        }
+        
+        document.addEventListener("offline", onOffline, false);
+
+        document.addEventListener("online", onOnline, false);
+        
+    });
+    function exitApp() {
+        navigator.app.exitApp();
+    }
+    function onOffline() {
+        isOffline = true;
+        CommonUtils.showErrorMessage("Network not available !");
+    }
+    function onOnline() {
+       
+        isOffline = false;
+       
+    }
+    function checkNetwork() {
+        var networkState = navigator.connection.type;
+
+        //var states = {};
+        //states[Connection.UNKNOWN] = 'Unknown connection';
+        //states[Connection.ETHERNET] = 'Ethernet connection';
+        //states[Connection.WIFI] = 'WiFi connection';
+        //states[Connection.CELL_2G] = 'Cell 2G connection';
+        //states[Connection.CELL_3G] = 'Cell 3G connection';
+        //states[Connection.CELL_4G] = 'Cell 4G connection';
+        //states[Connection.CELL] = 'Cell generic connection';
+        //states[Connection.NONE] = 'No network connection';
+        if (networkState == Connection.NONE || networkState == Connection.UNKNOWN)
+            isOffline = true;
+
+    }
     function setupPush() {
         var push = PushNotification.init({
             "android": {
@@ -203,7 +257,6 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
                 var unread = $.grep(msg, function (m, x) {
                     return m.InviteId == n.Id;
                 });
-                debugger
                 if (unread.length > 0) {
                     n.UnReadMessage = unread[0].Count;
                 } else {
