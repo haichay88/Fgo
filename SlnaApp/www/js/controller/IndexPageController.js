@@ -57,13 +57,17 @@ MyApp.angular.controller('IndexPageController', ['$scope', '$http', 'InitService
         // MyApp.fw7.app
       
         $scope.UserContext = CommonUtils.GetToken();
-        var request = { Token: $scope.UserContext.Token };
+       
 
         checkNetwork();
         if (!isOffline) {
             signalR.startHub();
             setupPush();
-            signalR.Login(request);
+            if ($scope.UserContext) {
+                var request = { Token: $scope.UserContext.Token };
+                signalR.Login(request);
+            }
+                
            
           
 
